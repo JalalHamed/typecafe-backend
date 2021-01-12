@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import User
+from .models import User
 from django.contrib.auth.admin import UserAdmin
 from django.forms import TextInput, Textarea, CharField
 from django import forms
@@ -10,7 +10,7 @@ class UserAdminConfig(UserAdmin):
     model = User
     search_fields = ('email', 'username',)
     list_filter = ('email', 'username', 'is_active', 'is_staff')
-    ordering = ('-start_date',)
+    ordering = ('-created_at',)
     list_display = ('id', 'email', 'username', 'is_active', 'is_staff',)
     fieldsets = (
         (None, {'fields': ('email', 'username',)}),

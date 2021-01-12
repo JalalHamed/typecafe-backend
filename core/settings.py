@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 from django.conf import settings
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'projects',
-    'users',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
@@ -140,7 +142,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -169,3 +171,9 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'typecafeir@gmail.com '
+EMAIL_HOST_PASSWORD = '$Zero_13.kraD$'
