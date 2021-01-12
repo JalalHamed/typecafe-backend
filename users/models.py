@@ -21,7 +21,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, username, password, **other_fields)
 
 
-class NewUser(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=25, unique=True)
     start_date = models.DateTimeField(default=timezone.now)
