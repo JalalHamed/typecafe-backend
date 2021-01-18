@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -15,6 +16,6 @@ class RegistrationView(APIView):
             data['response'] = 'successfuly added a new user.'
             data['email'] = account.email
             data['username'] = account.username
+            return Response(data)
         else:
-            data = serializer.errors
-        return Response(data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

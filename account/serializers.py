@@ -10,7 +10,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'confirm_password']
         extra_kwargs = {'password': {'write_only': True}}
 
-    
+
     def save(self):
         account = Account(
             username=self.validated_data['username'],
@@ -21,6 +21,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         if password != confirm_password:
             raise serializers.ValidationError({'password': ['passwords don\'t match.']})
+
         account.set_password(password)
         account.save()
         return account
