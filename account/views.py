@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegistrationSerializer, EmailSerializer
+from .serializers import RegistrationSerializer, CheckEmailSerializer
 from .models import Account
 
 
@@ -26,11 +26,11 @@ class RegistrationView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class EmailView(APIView):
+class CheckEmailView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
-        serializer = EmailSerializer(data=request.data)
+        serializer = CheckEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         queryset = Account.objects.filter(email=serializer.data['email']).exists()
         return Response(queryset)

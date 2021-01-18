@@ -48,7 +48,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Email(models.Model):
+class CheckEmail(models.Model):
     email = models.EmailField(max_length=256)
 
     def __str(self):

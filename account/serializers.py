@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Email
+from .models import Account, CheckEmail
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -27,9 +27,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return account
 
 
-class EmailSerializer(serializers.ModelSerializer):
+class CheckEmailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Email
+        model = CheckEmail
         fields = ['email']
 
     def __str__(self):
