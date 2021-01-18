@@ -5,9 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 class AccountManager(BaseUserManager):
     def create_user(self, email, username, password=None):
         if not email:
-            raise ValueError('email field is required.')
+            raise ValueError('Email field is required.')
         if not username:
-            raise ValueError('username field is required.')
+            raise ValueError('Username field is required.')
         user = self.model (
             email=self.normalize_email(email),
             username=username,
@@ -46,3 +46,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+class Email(models.Model):
+    email = models.EmailField(max_length=256)
+
+    def __str(self):
+        return self.email

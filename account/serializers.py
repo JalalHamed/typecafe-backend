@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account
+from .models import Account, Email
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -25,3 +25,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Email
+        fields = ['email']
+
+    def __str__(self):
+        return self.email
