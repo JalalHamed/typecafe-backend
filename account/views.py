@@ -32,5 +32,8 @@ class CheckEmailView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = CheckEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        queryset = Account.objects.filter(email=serializer.data['email']).exists()
-        return Response(queryset)
+        user = Account.objects.filter(email=serializer.data['email'])
+        if user.exists():
+            return Response({'is_member': True, 'username': user.first().username})
+        else:
+            return Response({'is_member': False})
