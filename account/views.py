@@ -1,5 +1,7 @@
+from random import randint
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,13 +18,6 @@ class RegistrationView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        send_mail(
-            'HEY man',
-            'THIS IS FOOKIN STUPID MAN, YOU WHAM SAYIN???',
-            'typecafeir@gmail.com',
-            ['memlobarze@nedoz.com'],
-            fail_silently=False
-        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -34,6 +29,17 @@ class CheckEmailView(APIView):
         serializer.is_valid(raise_exception=True)
         user = Account.objects.filter(email=serializer.data['email'])
         if user.exists():
-            return Response({'is_member': True, 'username': user.first().username})
+            return Response({'is_member': True})
         else:
+            confirm_code = randint(10000000, 99999999)
+            context_data = {'code': confirm_code}
+            email_template = get_template('email.html').render(context_data)
+            email = EmailMessage(
+                'تایید آدرس ایمیل',
+                email_template,
+                settings.EMAIL_HOST_USER,
+                [serializer.data['email']],
+            )
+            email.content_subtype = 'html'
+            email.send(fail_silently=False)
             return Response({'is_member': False})

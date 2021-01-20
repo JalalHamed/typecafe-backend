@@ -31,6 +31,3 @@ class CheckEmailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CheckEmail
         fields = ['email']
-
-    def __str__(self):
-        return self.email
