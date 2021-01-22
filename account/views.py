@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegistrationSerializer, CheckEmailSerializer
-from .models import Account
+from .serializers import RegistrationSerializer
+from .models import Account, ConfirmationCode
 
 
 class RegistrationView(APIView):
@@ -25,9 +25,8 @@ class CheckEmailView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
-        serializer = CheckEmailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = Account.objects.filter(email=serializer.data['email'])
+        email_address = request.data['email']
+        user = Account.objects.filter(email__iexact=email_address)
         if user.exists():
             return Response({'is_member': True})
         else:
@@ -38,8 +37,22 @@ class CheckEmailView(APIView):
                 'تایید آدرس ایمیل',
                 email_template,
                 settings.EMAIL_HOST_USER,
-                [serializer.data['email']],
+                [email_address],
             )
             email.content_subtype = 'html'
             email.send(fail_silently=False)
+            ConfirmationCode(code=confirm_code, email=email_address).save()
             return Response({'is_member': False})
+
+
+class ConfirmEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        input_code = int(request.data['code'])
+        email = request.data['email']
+        confirm_request = ConfirmationCode.objects.filter(email__iexact=email).last()
+        if input_code == confirm_request.code:
+            return Response(True)
+        else:
+            return Response(False)
