@@ -51,4 +51,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class ConfirmationCode(models.Model):
     code = models.IntegerField()
     email = models.EmailField(max_length=256)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return 'code: ' + str(self.code)
