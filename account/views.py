@@ -57,6 +57,8 @@ class ConfirmEmailView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        time_threshold = now() - timedelta(minutes=20)
+        ConfirmationCode.objects.filter(created_at__lt=time_threshold).delete()
         input_code = int(request.data['code'])
         email = request.data['email']
         confirm_request = ConfirmationCode.objects.filter(email__iexact=email).last()
