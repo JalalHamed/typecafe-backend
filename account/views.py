@@ -8,15 +8,14 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 from .models import Account, ConfirmationCode
 
 
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -26,7 +25,11 @@ class RegistrationView(APIView):
 class CheckEmailView(APIView):
     permission_classes = [AllowAny]
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        # Delete confirmation codes that are older than 1 day
+        time_threshold = now() - timedelta(days=1)
+        ConfirmationCode.objects.filter(created_at__lt=time_threshold).delete()
+        # ---
         email_address = request.data['email']
         user = Account.objects.filter(email__iexact=email_address)
         if user.exists():
@@ -56,9 +59,7 @@ class CheckEmailView(APIView):
 class ConfirmEmailView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        time_threshold = now() - timedelta(minutes=20)
-        ConfirmationCode.objects.filter(created_at__lt=time_threshold).delete()
+    def post(self, request):
         input_code = int(request.data['code'])
         email = request.data['email']
         confirm_request = ConfirmationCode.objects.filter(email__iexact=email).last()
@@ -66,3 +67,12 @@ class ConfirmEmailView(APIView):
             return Response({'codes_match': True})
         else:
             return Response({'codes_match': False})
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

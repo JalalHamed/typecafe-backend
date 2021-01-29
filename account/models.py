@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class AccountManager(BaseUserManager):
@@ -48,6 +49,13 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.displayname
+
+    def tokens(self):
+        refresh = RefreshToken.for_user(self)
+        return {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }
 
 
 class ConfirmationCode(models.Model):

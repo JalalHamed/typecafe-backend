@@ -1,4 +1,7 @@
+from re import search
+from django.contrib import auth
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from .models import Account
 
 
@@ -25,3 +28,26 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.set_password(password)
         account.save()
         return account
+
+
+class LoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=256)
+    password = serializers.CharField(min_length=8, write_only=True)
+    displayname = serializers.CharField(max_length=20, read_only=True)
+    tokens = serializers.CharField(max_length=256, read_only=True)
+
+    class Meta:
+        model = Account
+        fields = ['email', 'password', 'displayname', 'tokens']
+
+    def validate(self, attrs):
+        email = attrs.get('email', '')
+        password = attrs.get('password', '')
+        user = auth.authenticate(email=email, password=password)
+        if not user:
+            raise AuthenticationFailed('The user doesn\'t exist.')
+        return {
+            'email': user.email,
+            'displayname': user.displayname,
+            'tokens': user.tokens
+        }
