@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView, CheckEmailView, ConfirmEmailView, LoginView
+from .views import *
 
 app_name = 'account'
 

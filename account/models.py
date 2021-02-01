@@ -37,6 +37,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(max_length=256, unique=True)
     displayname = models.CharField(max_length=20, validators=[displaynameValidator])
+    credit = models.IntegerField(default=0)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -50,12 +51,11 @@ class Account(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.displayname
 
-    def tokens(self):
-        refresh = RefreshToken.for_user(self)
-        return {
-            'access': str(refresh.access_token),
-            'refresh': str(refresh)
-        }
+    def refresh(self):
+        return str(RefreshToken.for_user(self))
+    
+    def access(self):
+        return str(RefreshToken.for_user(self).access_token)
 
 
 class ConfirmationCode(models.Model):

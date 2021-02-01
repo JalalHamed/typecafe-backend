@@ -34,20 +34,23 @@ class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=256)
     password = serializers.CharField(min_length=8, write_only=True)
     displayname = serializers.CharField(max_length=20, read_only=True)
-    tokens = serializers.CharField(max_length=256, read_only=True)
+    refresh = serializers.CharField(max_length=256, read_only=True)
+    access = serializers.CharField(max_length=256, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'displayname', 'tokens']
+        fields = ['email', 'password', 'displayname', 'credit', 'refresh', 'access']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
         password = attrs.get('password', '')
         user = auth.authenticate(email=email, password=password)
         if not user:
-            raise AuthenticationFailed('The user doesn\'t exist.')
+            raise AuthenticationFailed('Password is not correct.')
         return {
             'email': user.email,
             'displayname': user.displayname,
-            'tokens': user.tokens
+            'credit': user.credit,
+            'refresh': user.refresh,
+            'access': user.access,
         }
