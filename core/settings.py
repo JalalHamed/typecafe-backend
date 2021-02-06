@@ -180,9 +180,5 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'TypeCafe<typecafeir@gmail.com'
 
 MEDIA_ROOT = BASE_DIR / 'media'
-<<<<<<< HEAD
 MEDIA_URL = '/media/'
 
-=======
-MEDIA_URL = '/media/'
->>>>>>> 36051908a5177e903e9a28b3a50dfc0420d2244b
