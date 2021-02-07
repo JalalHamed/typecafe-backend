@@ -1,18 +1,25 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from account.models import Account
 from .models import Project
-from .serializers import CreateProjectSerializer
+from .serializers import *
 
 
 class ProjectView(APIView):
     def get(self, request):
-        return Response(Project.objects.all())
-    
+        serializer = ProjectsSerializer(Project.objects.all().order_by('-created_at'), many=True)
+        dataList = serializer.data
+        for index in range(len(dataList)):
+            for key in dataList[index]:
+                if key == 'client':
+                    dataList[index][key] = Account.objects.get(id=dataList[index][key]).displayname
+        return Response(dataList)
 
-class CreateProject(APIView):
+
+class CreateProjectView(APIView):
     def post(self, request):
         serializer = CreateProjectSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(client=request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
