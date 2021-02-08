@@ -24,7 +24,10 @@ class Project(models.Model):
     # total_price = models.IntegerField()
     # guarantee_price = models.IntegerField()
     # views = models.IntegerField(default=0)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='OP'),
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='OP')
+
+    class Meta:
+        ordering = ['-created_at']
     
     def __str__(self):
         return self.description
