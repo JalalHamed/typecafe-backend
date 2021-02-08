@@ -2,7 +2,6 @@ from django.db import models
 from account.models import Account
 
 def upload_path(instance, filename):
-    # return '/'.join(['projects', str(instance.client), filename])
     return '/'.join(['projects', filename])
 
 
