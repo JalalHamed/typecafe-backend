@@ -18,12 +18,12 @@ class Project(models.Model):
     files = models.FileField(upload_to=upload_path)
     created_at = models.DateTimeField(auto_now_add=True)
     # deadline = models.TimeField()
-    description = models.TextField(default="No Description Has Been Added")
+    description = models.TextField(null=True, blank=True)
     # number_of_pages = models.IntegerField()
     # price_per_page = models.IntegerField()
     # total_price = models.IntegerField()
     # guarantee_price = models.IntegerField()
-    # views = models.IntegerField(default=0)
+    # offers = models.IntegerField(default=0)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='OP')
 
     class Meta:

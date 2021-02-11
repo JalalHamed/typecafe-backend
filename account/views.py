@@ -64,9 +64,9 @@ class ConfirmEmailView(APIView):
         email = request.data['email']
         confirm_request = ConfirmationCode.objects.filter(email__iexact=email).last()
         if input_code == confirm_request.code:
-            return Response({'codes_match': True})
+            return Response({'potato': 'potato'})
         else:
-            return Response({'codes_match': False})
+            return Response({'potato': 'potahto'})
 
 
 class LoginView(APIView):
