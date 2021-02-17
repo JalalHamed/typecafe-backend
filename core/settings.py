@@ -177,7 +177,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'typecafeir@gmail.com'
 EMAIL_HOST_PASSWORD = 'sjcinfcembduovmx'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'TypeCafe<typecafeir@gmail.com'
+DEFAULT_FROM_EMAIL = 'TypeCafe<typecafeir@gmail.com>'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'

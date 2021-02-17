@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from account.models import Account
 from .models import Project
 
 
@@ -9,13 +8,14 @@ class ProjectsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['description', 'files', 'created_at', 'client', 'client_picture']
+        fields = ['description', 'files', 'created_at', 'client', 'client_picture', 'status']
 
     def get_client_displayname(self, project):
         return project.client.displayname
 
     def get_client_picture(seld, project):
-        return '/media/' + str(project.client.picture)
+        if project.client.picture:
+            return '/media/' + str(project.client.picture)
 
 
 class CreateProjectSerializer(serializers.ModelSerializer):
