@@ -22,7 +22,7 @@ class AccountAdmin(UserAdmin):
 
 class ConfirmationCodeAdmin(admin.ModelAdmin):
     list_display = ('email', 'code', 'created_at')
-    
+
 
 admin.site.site_header = 'TypeCafe administartion'
 admin.site.unregister(Group)

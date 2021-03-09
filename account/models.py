@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
-from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 class AccountManager(BaseUserManager):
@@ -40,7 +43,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     displaynameValidator = RegexValidator('^[-0-9a-zA-Z\u0622\u0627\u0628\u067E\u062A-\u062C\u0686\u062D-\u0632\u0698\u0633-\u063A\u0641\u0642\u06A9\u06AF\u0644-\u0648\u06CC\u06F0-\u06F9 ]*$', 'invalid format.')
 
     email = models.EmailField(max_length=256, unique=True)
-    displayname = models.CharField(max_length=20, validators=[displaynameValidator])
+    displayname = models.CharField(max_length=14, validators=[displaynameValidator])
     credit = models.IntegerField(default=0)
     picture = models.ImageField(null=True, blank=True, upload_to=upload_path)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -54,13 +57,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     def __str__(self):
-        return self.displayname
-
-    def refresh(self):
-        return str(RefreshToken.for_user(self))
-    
-    def access(self):
-        return str(RefreshToken.for_user(self).access_token)
+        return self.email
 
 
 class ConfirmationCode(models.Model):
@@ -70,3 +67,9 @@ class ConfirmationCode(models.Model):
 
     def __str__(self):
         return str(self.code)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
