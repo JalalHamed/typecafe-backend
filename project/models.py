@@ -14,16 +14,9 @@ class Project(models.Model):
     ]
 
     client = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
-    # typist = models.CharField(max_length=50)
-    files = models.FileField(upload_to=upload_path)
     created_at = models.DateTimeField(auto_now_add=True)
-    # deadline = models.TimeField()
+    image = models.FileField(upload_to=upload_path)
     description = models.TextField(null=True, blank=True)
-    # number_of_pages = models.IntegerField()
-    # price_per_page = models.IntegerField()
-    # total_price = models.IntegerField()
-    # guarantee_price = models.IntegerField()
-    # offers = models.IntegerField(default=0)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='OP')
 
     class Meta:
