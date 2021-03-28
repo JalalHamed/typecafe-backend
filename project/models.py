@@ -7,17 +7,20 @@ def upload_path(instance, filename):
 
 class Project(models.Model):
     STATUS_CHOICES = [
-        ('OP', 'Open'),
+        ('O', 'Open'),
         ('IP', 'In Progress'),
-        ('DN', 'Done'),
-        ('JM', 'Judgment'),
+        ('D', 'Done'),
+        ('J', 'Judgment'),
     ]
 
-    client = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+    client = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    image = models.FileField(upload_to=upload_path)
-    description = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='OP')
+    file = models.FileField(upload_to=upload_path)
+    languages_and_additions = models.TextField()
+    number_of_pages = models.IntegerField()
+    delivery_deadline = models.DateTimeField()
+    description = models.TextField()
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='O')
 
     class Meta:
         ordering = ['-created_at']
