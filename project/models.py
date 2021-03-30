@@ -18,7 +18,7 @@ class Project(models.Model):
     file = models.FileField(upload_to=upload_path)
     languages_and_additions = models.TextField()
     number_of_pages = models.IntegerField()
-    delivery_deadline = models.DateTimeField()
+    delivery_deadline = models.IntegerField()
     description = models.TextField()
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='O')
 
