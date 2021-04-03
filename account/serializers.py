@@ -1,4 +1,3 @@
-from re import search
 from django.contrib import auth
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
@@ -55,3 +54,9 @@ class LoginSerializer(serializers.ModelSerializer):
             'picture': user.picture,
             'token': Token.objects.get(user=user).key,
         }
+
+
+class ProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['picture']

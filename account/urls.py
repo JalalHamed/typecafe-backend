@@ -8,4 +8,5 @@ urlpatterns = [
     path('confirm-email/', ConfirmEmailView.as_view(), name='confirm-email'),
     path('register/', RegistrationView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
+    path('profile-image/', ProfileImageView.as_view(), name='profile-view')
 ]   

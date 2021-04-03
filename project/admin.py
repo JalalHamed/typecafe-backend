@@ -3,8 +3,9 @@ from .models import *
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'description', 'created_at', 'status')
+    list_display = ('client', 'id', 'description', 'created_at', 'status')
     ordering = ['-created_at']
-    search_fields = ['client', 'description']
+    search_fields = ['client', 'id', 'description']
 
 admin.site.register(Project, ProjectAdmin)
+admin.site.register(Offer)

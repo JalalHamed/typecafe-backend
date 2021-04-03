@@ -27,3 +27,11 @@ class Project(models.Model):
     
     def __str__(self):
         return self.description
+
+
+class Offer(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    offered_price = models.IntegerField()
+
+    def __str__(self):
+        return str(self.offered_price)
