@@ -32,5 +32,6 @@ class CreateProjectSerializer(serializers.ModelSerializer):
 class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
-        fields = ['offered_price']
+        fields = ['offered_price', 'project']
+
         

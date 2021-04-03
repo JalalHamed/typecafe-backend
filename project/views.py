@@ -30,5 +30,5 @@ class CreateOfferView(APIView):
     def post(self, request):
         serializer = CreateOfferSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(project=Project.objects.get(id=request.data['project_id']))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
