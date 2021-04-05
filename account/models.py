@@ -73,3 +73,16 @@ class ConfirmationCode(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class SupportTicket(models.Model):
+    client = models.ForeignKey(Account, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
+
+
+class SupportMessage(models.Model):
+    client = models.ForeignKey(Account, on_delete=models.CASCADE)
+    ticket = models.ForeignKey(SupportTicket, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

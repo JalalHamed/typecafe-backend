@@ -91,3 +91,21 @@ class ProfileImageView(APIView):
         serializer = ProfileImageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(status=status.HTTP_200_OK)
+
+
+class SupportTicketView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = SupportTicketSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class SupportMessageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = SupportMessageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=status.HTTP_201_CREATED)

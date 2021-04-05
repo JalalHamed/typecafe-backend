@@ -2,7 +2,7 @@ from django.contrib import auth
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authtoken.models import Token
-from .models import Account
+from .models import Account, SupportMessage, SupportTicket
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -60,3 +60,15 @@ class ProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['picture']
+
+
+class SupportTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportTicket
+        fields = ['client', 'status']
+
+
+class SupportMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportMessage
+        fields = ['client', 'ticket', 'message']

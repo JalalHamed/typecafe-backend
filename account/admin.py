@@ -28,3 +28,5 @@ admin.site.site_header = 'TypeCafe administartion'
 admin.site.unregister(Group)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(ConfirmationCode, ConfirmationCodeAdmin)
+admin.site.register(SupportTicket)
+admin.site.register(SupportMessage)

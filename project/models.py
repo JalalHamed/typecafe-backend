@@ -26,7 +26,7 @@ class Project(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Offer(models.Model):
@@ -34,4 +34,4 @@ class Offer(models.Model):
     offered_price = models.IntegerField()
 
     def __str__(self):
-        return self.id
+        return str(self.id)
