@@ -1,10 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
-from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class AccountManager(BaseUserManager):
@@ -58,6 +55,12 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def refresh(self):
+        return str(RefreshToken.for_user(self))
+    
+    def access(self):
+        return str(RefreshToken.for_user(self).access_token)
 
 
 class ConfirmationCode(models.Model):
@@ -67,12 +70,6 @@ class ConfirmationCode(models.Model):
 
     def __str__(self):
         return str(self.code)
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
 
 
 class SupportTicket(models.Model):

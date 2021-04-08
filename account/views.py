@@ -8,9 +8,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
-from .models import Account, ConfirmationCode
+from .models import *
 
 
 class RegistrationView(APIView):
@@ -20,10 +20,12 @@ class RegistrationView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        refresh = RefreshToken.for_user(user)
         res = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
             'email': user.email,
             'displayname': user.displayname,
-            'token': Token.objects.get(user=user).key,
         }
         return Response(res, status=status.HTTP_201_CREATED)
 

@@ -14,7 +14,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ['displayname', 'email', 'password', 'confirm_password']
         extra_kwargs = {'password': {'write_only': True}}
 
-
     def save(self):
         account = Account(
             displayname=self.validated_data['displayname'],
@@ -35,11 +34,12 @@ class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=256)
     password = serializers.CharField(min_length=8, write_only=True)
     displayname = serializers.CharField(max_length=20, read_only=True)
-    token = serializers.CharField(max_length=256, read_only=True)
+    refresh = serializers.CharField(max_length=256, read_only=True)
+    access = serializers.CharField(max_length=256, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'displayname', 'credit', 'picture', 'token']
+        fields = ['email', 'password', 'displayname', 'credit', 'picture', 'refresh', 'access']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -52,7 +52,8 @@ class LoginSerializer(serializers.ModelSerializer):
             'displayname': user.displayname,
             'credit': user.credit,
             'picture': user.picture,
-            'token': Token.objects.get(user=user).key,
+            'refresh': user.refresh,
+            'access': user.access,
         }
 
 

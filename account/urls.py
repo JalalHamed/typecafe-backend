@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import *
 
 app_name = 'account'
@@ -11,4 +12,6 @@ urlpatterns = [
     path('profile-image/', ProfileImageView.as_view(), name='profile-view'),
     path('support-ticket/', SupportTicketView.as_view(), name='support-ticket'),
     path('support-message/', SupportMessageView.as_view(), name='support-message'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]   
