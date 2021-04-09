@@ -11,7 +11,7 @@ class ProjectView(APIView):
 
     def get(self, request):
         serializer = ProjectsSerializer(Project.objects.all(), many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CreateProjectView(APIView):
@@ -39,4 +39,4 @@ class MyProjectsView(APIView):
 
     def get(self, request):
         serializer = ProjectsSerializer(Project.objects.filter(client=request.user), many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

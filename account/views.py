@@ -86,6 +86,23 @@ class LoginView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class UserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        pic = ""
+        if user.picture:
+            pic = '/media/' + str(user.picture)
+        data = {
+            'displayname': user.displayname,
+            'credit': user.credit,
+            'email': user.email,
+            'picture': pic,
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class ProfileImageView(APIView):
     permission_classes = [IsAuthenticated]
 
