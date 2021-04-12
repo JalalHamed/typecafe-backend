@@ -90,10 +90,10 @@ class UpdateDisplaynameView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
-        user = request.user
-        user.displayname = request.data['displayName']
-        user.save()
-        return Response(user.displayname, status=status.HTTP_200_OK)
+        serializer = UpdateDisplaynameSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]

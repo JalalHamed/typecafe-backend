@@ -73,6 +73,12 @@ class UserDataSerializer(serializers.ModelSerializer):
         }
 
 
+class UpdateDisplaynameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['displayname']
+
+
 class ProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
