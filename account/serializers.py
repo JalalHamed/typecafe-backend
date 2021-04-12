@@ -39,7 +39,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'displayname', 'credit', 'picture', 'refresh', 'access']
+        fields = ['email', 'password', 'displayname', 'credit', 'image', 'refresh', 'access']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -51,7 +51,7 @@ class LoginSerializer(serializers.ModelSerializer):
             'email': user.email,
             'displayname': user.displayname,
             'credit': user.credit,
-            'picture': user.picture,
+            'image': user.image,
             'refresh': user.refresh,
             'access': user.access,
         }
@@ -60,7 +60,7 @@ class LoginSerializer(serializers.ModelSerializer):
 class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['email', 'displayname', 'credit', 'picture']
+        fields = ['email', 'displayname', 'credit', 'image']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -69,7 +69,7 @@ class UserDataSerializer(serializers.ModelSerializer):
             'email': user.email,
             'displayname': user.displayname,
             'credit': user.credit,
-            'picture': user.picture,
+            'image': user.image,
         }
 
 
@@ -79,10 +79,10 @@ class UpdateDisplaynameSerializer(serializers.ModelSerializer):
         fields = ['displayname']
 
 
-class ProfileImageSerializer(serializers.ModelSerializer):
+class UpdateProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['picture']
+        fields = ['image']
 
 
 class SupportTicketSerializer(serializers.ModelSerializer):

@@ -42,7 +42,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=256, unique=True)
     displayname = models.CharField(max_length=14, validators=[displaynameValidator])
     credit = models.IntegerField(default=0)
-    picture = models.ImageField(null=True, blank=True, upload_to=upload_path)
+    image = models.ImageField(null=True, blank=True, upload_to=upload_path)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)

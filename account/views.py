@@ -101,24 +101,24 @@ class UserDataView(APIView):
     def get(self, request):
         user = request.user
         pic = ""
-        if user.picture:
-            pic = '/media/' + str(user.picture)
+        if user.image:
+            pic = '/media/' + str(user.image)
         data = {
             'displayname': user.displayname,
             'credit': user.credit,
             'email': user.email,
-            'picture': pic,
+            'image': pic,
         }
         return Response(data, status=status.HTTP_200_OK)
 
 
-class ProfileImageView(APIView):
+class UpdateProfileImageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = ProfileImageSerializer(data=request.data)
+        serializer = UpdateProfileImageSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        return Response(status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SupportTicketView(APIView):
