@@ -95,6 +95,17 @@ class UpdateDisplaynameView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class UpdateProfileImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        serializer = UpdateProfileImageSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -110,15 +121,6 @@ class UserDataView(APIView):
             'image': pic,
         }
         return Response(data, status=status.HTTP_200_OK)
-
-
-class UpdateProfileImageView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        serializer = UpdateProfileImageSerializer(request.user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SupportTicketView(APIView):
