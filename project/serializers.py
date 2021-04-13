@@ -10,7 +10,7 @@ class ProjectsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline', 'description', 'created_at', 'client', 'client_email', 'client_image', 'status']
+        fields = ['id', 'file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline', 'type', 'description', 'created_at', 'client', 'client_email', 'client_image', 'status']
 
     def get_client_displayname(self, project):
         return project.client.displayname
@@ -26,7 +26,7 @@ class ProjectsSerializer(serializers.ModelSerializer):
 class CreateProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline', 'description']
+        fields = ['file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline', 'type', 'description']
 
 
 class CreateOfferSerializer(serializers.ModelSerializer):

@@ -20,6 +20,7 @@ class Project(models.Model):
     number_of_pages = models.IntegerField()
     delivery_deadline = models.IntegerField()
     description = models.TextField()
+    type = models.TextField()
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='O')
 
     class Meta:
