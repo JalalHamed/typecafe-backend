@@ -29,6 +29,12 @@ class CreateProjectSerializer(serializers.ModelSerializer):
         fields = ['file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline', 'type', 'description']
 
 
+class OfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = ['project', 'typist', 'offered_price']
+
+
 class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer

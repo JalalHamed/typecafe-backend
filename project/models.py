@@ -31,9 +31,15 @@ class Project(models.Model):
 
 
 class Offer(models.Model):
+    STATUS_CHOICES = [
+        ('A', 'Await'),
+        ('ACC', 'Accepted'),
+        ('REJ', 'Rejected'),
+    ]
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)
     offered_price = models.IntegerField()
+    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A')
 
     def __str__(self):
         return str(self.id)
