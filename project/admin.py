@@ -7,5 +7,6 @@ class ProjectAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     search_fields = ['client', 'id', 'description']
 
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Offer)

@@ -10,7 +10,7 @@ class AccountManager(BaseUserManager):
             raise ValueError('Email field is required.')
         if not displayname:
             raise ValueError('Displayname field is required.')
-        user = self.model (
+        user = self.model(
             email=self.normalize_email(email),
             displayname=displayname,
         )
@@ -37,10 +37,12 @@ def upload_path(instance, filename):
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
-    displaynameValidator = RegexValidator('^[-0-9a-zA-Z\u0622\u0627\u0628\u067E\u062A-\u062C\u0686\u062D-\u0632\u0698\u0633-\u063A\u0641\u0642\u06A9\u06AF\u0644-\u0648\u06CC\u06F0-\u06F9 ]*$', 'invalid format.')
+    displaynameValidator = RegexValidator(
+        '^[-0-9a-zA-Z\u0622\u0627\u0628\u067E\u062A-\u062C\u0686\u062D-\u0632\u0698\u0633-\u063A\u0641\u0642\u06A9\u06AF\u0644-\u0648\u06CC\u06F0-\u06F9 ]*$', 'invalid format.')
 
     email = models.EmailField(max_length=256, unique=True)
-    displayname = models.CharField(max_length=14, validators=[displaynameValidator])
+    displayname = models.CharField(
+        max_length=14, validators=[displaynameValidator])
     credit = models.IntegerField(default=0)
     image = models.ImageField(null=True, blank=True, upload_to=upload_path)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -55,10 +57,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
     def refresh(self):
         return str(RefreshToken.for_user(self))
-    
+
     def access(self):
         return str(RefreshToken.for_user(self).access_token)
 

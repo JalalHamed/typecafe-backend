@@ -5,8 +5,10 @@ from .models import Account, SupportMessage, SupportTicket
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True, required=True)
-    confirm_password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True, required=True)
+    confirm_password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = Account
@@ -22,7 +24,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
         confirm_password = self.validated_data['confirm_password']
 
         if password != confirm_password:
-            raise serializers.ValidationError({'password': ['passwords don\'t match.']})
+            raise serializers.ValidationError(
+                {'password': ['passwords don\'t match.']})
 
         account.set_password(password)
         account.save()
@@ -38,7 +41,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'displayname', 'credit', 'image', 'refresh', 'access']
+        fields = ['email', 'password', 'displayname',
+                  'credit', 'image', 'refresh', 'access']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
