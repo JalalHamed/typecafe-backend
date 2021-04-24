@@ -32,7 +32,7 @@ class RegistrationView(APIView):
 
 class CheckEmailView(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         # Delete confirmation codes that are older than 1 day
         time_threshold = now() - timedelta(days=1)
@@ -43,14 +43,16 @@ class CheckEmailView(APIView):
         if user.exists():
             return Response({'is_member': True})
         else:
-            query = ConfirmationCode.objects.filter(email__iexact=email_address)
+            query = ConfirmationCode.objects.filter(
+                email__iexact=email_address)
             if query.exists() and query.last().created_at + timedelta(minutes=3) > now():
                 timeleft = query.last().created_at + timedelta(minutes=3) - now()
                 return Response({'is_member': False, 'timeleft': timeleft})
             else:
                 confirm_code = randint(10000000, 99999999)
                 context_data = {'code': confirm_code}
-                email_template = get_template('email.html').render(context_data)
+                email_template = get_template(
+                    'email.html').render(context_data)
                 email = EmailMessage(
                     'تایید آدرس ایمیل',
                     email_template,
@@ -61,7 +63,6 @@ class CheckEmailView(APIView):
                 email.send(fail_silently=False)
                 ConfirmationCode(code=confirm_code, email=email_address).save()
                 return Response({'is_member': False, 'timeleft': timedelta(minutes=3)})
-                
 
 
 class ConfirmEmailView(APIView):
@@ -70,7 +71,8 @@ class ConfirmEmailView(APIView):
     def post(self, request):
         input_code = int(request.data['code'])
         email = request.data['email']
-        confirm_request = ConfirmationCode.objects.filter(email__iexact=email).last()
+        confirm_request = ConfirmationCode.objects.filter(
+            email__iexact=email).last()
         if input_code == confirm_request.code:
             return Response({'potato': 'potato'})
         else:
@@ -90,7 +92,8 @@ class UpdateDisplaynameView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
-        serializer = UpdateDisplaynameSerializer(request.user, data=request.data, partial=True)
+        serializer = UpdateDisplaynameSerializer(
+            request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -100,7 +103,8 @@ class UpdateProfileImageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
-        serializer = UpdateProfileImageSerializer(request.user, data=request.data, partial=True)
+        serializer = UpdateProfileImageSerializer(
+            request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

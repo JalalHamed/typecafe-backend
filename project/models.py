@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import Account
 
+
 def upload_path(instance, filename):
     return '/'.join(['projects', filename])
 
@@ -21,11 +22,12 @@ class Project(models.Model):
     delivery_deadline = models.IntegerField()
     description = models.TextField()
     type = models.TextField()
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='O')
+    status = models.CharField(
+        max_length=2, choices=STATUS_CHOICES, default='O')
 
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return str(self.id)
 
@@ -39,7 +41,8 @@ class Offer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)
     offered_price = models.IntegerField()
-    status = models.CharField(max_length=3, choices=STATUS_CHOICES, default='A')
+    status = models.CharField(
+        max_length=3, choices=STATUS_CHOICES, default='A')
 
     def __str__(self):
         return str(self.id)
