@@ -1,32 +1,37 @@
 import json
-from channels.generic.websocket import WebsocketConsumer
-from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer # change it from sync to async
 
-class TcConsumer(WebsocketConsumer):
-    def connect(self):
-        async_to_sync(self.channel_layer.group_add)(
+
+class TcConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add(
             'tc',
             self.channel_name
         )
-        self.accept()
+        await self.accept()
+    
+    async def disconnect(self):
+        await self.channel_layer.group_discard(
+            'tc',
+            self.channel_name
+        )
         
-    def receive(self, text_data):
+    async def receive(self, text_data):
         data = json.loads(text_data)
         status = data['status']
         if status == 'newProject':
-            self.send(text_data=json.dumps({
+            await self.send(text_data=json.dumps({
                 'data': data
             }))
         if status == 'time':
-            async_to_sync(self.channel_layer.group_send)('tc', {
+            await self.channel_layer.group_send('tc', {
                 'type': 'time',
                 'data': json.dumps(data)
             })
         
-    def time(self, event):
-        self.send(text_data=json.dumps({
+    async def time(self, event):
+        await self.send(text_data=json.dumps({
             'data': event
         }))
 
-    def disconnect(self, close_code):
-        print('disconnected', close_code)
+    
