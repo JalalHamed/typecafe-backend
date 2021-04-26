@@ -27,7 +27,7 @@ class ProjectsSerializer(serializers.ModelSerializer):
 class CreateProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['file', 'languages_and_additions', 'number_of_pages',
+        fields = ['id', 'file', 'languages_and_additions', 'number_of_pages',
                   'delivery_deadline', 'type', 'description']
 
 

@@ -1,5 +1,8 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer # change it from sync to async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from account.models import Account
+from .models import Project
 
 
 class TcConsumer(AsyncWebsocketConsumer):
@@ -10,28 +13,47 @@ class TcConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
     
-    async def disconnect(self):
+    async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             'tc',
             self.channel_name
         )
         
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
-        status = data['status']
-        if status == 'newProject':
-            await self.send(text_data=json.dumps({
-                'data': data
-            }))
-        if status == 'time':
+        if data['status'] == 'new-project':
             await self.channel_layer.group_send('tc', {
-                'type': 'time',
-                'data': json.dumps(data)
+                'type': 'new_project',
+                'data': data
             })
-        
-    async def time(self, event):
+
+    async def new_project(self, event):
+        project = await self.get_project(event['data']['id'])
+        client = await self.get_client(event['data']['email'])
+        client_image = ""
+        if client['image']:
+            client_image = '/media/' + client['image']
+        print(client)
         await self.send(text_data=json.dumps({
-            'data': event
+            'id': project['id'],
+            'description': project['description'],
+            'file': project['file'],
+            'languages_and_additions': project['languages_and_additions'],
+            'number_of_pages': project['number_of_pages'],
+            'delivery_deadline': project['delivery_deadline'],
+            'description': project['description'],
+            'type': project['type'],
+            'created_at': str(project['created_at']),
+            'status': project['status'],
+            'client': client['displayname'],
+            'client_email': client['email'],
+            'client_image': client_image
         }))
 
+    @database_sync_to_async
+    def get_project(self, project_id):
+        return Project.objects.get(id=project_id).__dict__
     
+    @database_sync_to_async
+    def get_client(self, client_email):
+        return Account.objects.get(email=client_email).__dict__
