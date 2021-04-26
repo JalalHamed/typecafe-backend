@@ -33,6 +33,16 @@ class CreateProjectView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class DeleteProjectView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        project = Project.objects.get(id=request.data['id'])
+        if project.client == request.user:
+            project.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
 class CreateOfferView(APIView):
     permission_classes = [IsAuthenticated]
 

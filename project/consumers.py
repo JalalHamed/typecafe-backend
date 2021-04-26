@@ -24,7 +24,12 @@ class TcConsumer(AsyncWebsocketConsumer):
         if data['status'] == 'new-project':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_project',
-                'data': data
+                'data': data,
+            })
+        if data['status'] == 'delete-project':
+            await self.channel_layer.group_send('tc', {
+                'type': 'delete_project',
+                'data': data,
             })
 
     async def new_project(self, event):
@@ -35,6 +40,7 @@ class TcConsumer(AsyncWebsocketConsumer):
             client_image = '/media/' + client['image']
         print(client)
         await self.send(text_data=json.dumps({
+            'ws_type': 'new-project',
             'id': project['id'],
             'description': project['description'],
             'file': project['file'],
@@ -48,6 +54,13 @@ class TcConsumer(AsyncWebsocketConsumer):
             'client': client['displayname'],
             'client_email': client['email'],
             'client_image': client_image
+        }))
+    
+    async def delete_project(self, event):
+        await self.send(text_data=json.dumps({
+            'ws_type': 'delete_project',
+            'status': 'delete-project',
+            'id': event['data']['id']
         }))
 
     @database_sync_to_async
