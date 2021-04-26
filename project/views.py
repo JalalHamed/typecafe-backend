@@ -40,7 +40,9 @@ class DeleteProjectView(APIView):
         project = Project.objects.get(id=request.data['id'])
         if project.client == request.user:
             project.delete()
-        return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response('lol. nice try', status=status.HTTP_401_UNAUTHORIZED)
 
 
 class CreateOfferView(APIView):

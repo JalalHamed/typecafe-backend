@@ -38,7 +38,6 @@ class TcConsumer(AsyncWebsocketConsumer):
         client_image = ""
         if client['image']:
             client_image = '/media/' + client['image']
-        print(client)
         await self.send(text_data=json.dumps({
             'ws_type': 'new-project',
             'id': project['id'],
