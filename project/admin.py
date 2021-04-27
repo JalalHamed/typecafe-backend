@@ -8,5 +8,11 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['client', 'id', 'description']
 
 
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ('project', 'typist', 'offered_price', 'created_at', 'status')
+    ordering = ['-created_at']
+    search_fields = ['typist']
+
+
 admin.site.register(Project, ProjectAdmin)
-admin.site.register(Offer)
+admin.site.register(Offer, OfferAdmin)

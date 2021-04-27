@@ -31,6 +31,11 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'type': 'delete_project',
                 'data': data,
             })
+        if data['status'] == 'new-offer':
+            await self.channel_layer.group_send('tc', {
+                'type': 'new_offer',
+                'data': data,
+            })
 
     async def new_project(self, event):
         project = await self.get_project(event['data']['id'])

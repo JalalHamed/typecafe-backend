@@ -43,6 +43,7 @@ class Offer(models.Model):
     offered_price = models.IntegerField()
     status = models.CharField(
         max_length=3, choices=STATUS_CHOICES, default='A')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.id)

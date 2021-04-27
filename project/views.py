@@ -1,17 +1,18 @@
 from rest_framework import status
 from rest_framework.permissions import *
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .models import *
 from .serializers import *
 
 
-class ProjectView(APIView):
+class ProjectView(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, request):
-        serializer = ProjectsSerializer(Project.objects.all(), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    queryset = Project.objects.all()
+    serializer_class = ProjectsSerializer
+    pagination_class = PageNumberPagination
 
 
 class MyProjectsView(APIView):
