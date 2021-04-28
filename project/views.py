@@ -43,7 +43,7 @@ class DeleteProjectView(APIView):
             project.delete()
             return Response(status=status.HTTP_200_OK)
         else:
-            return Response('lol. nice try', status=status.HTTP_401_UNAUTHORIZED)
+            return Response('lol. nice try', status=status.HTTP_403_FORBIDDEN)
 
 
 class CreateOfferView(APIView):
@@ -64,10 +64,11 @@ class CreateOfferView(APIView):
 class OffersView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        project = Project.objects.get(id=request.data['project_id'])
-        if request.user == project.client:
-            serializer = OfferSerializer(
-                Offer.objects.filter(project=project), many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response({'error': 'You are not authorized to access this information.'}, status=status.HTTP_403_FORBIDDEN)
+    def get(self, request):
+        project_query = Project.objects.filter(client=request.user)
+        offers = []
+        for x in project_query:
+            offer_query = Offer.objects.filter(project=x)
+            offers.extend(offer_query)
+        serializer = OfferSerializer(offers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

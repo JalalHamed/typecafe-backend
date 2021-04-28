@@ -47,7 +47,7 @@ class TcConsumer(AsyncWebsocketConsumer):
             'ws_type': 'new-project',
             'id': project['id'],
             'description': project['description'],
-            'file': '/media/' + project['file'],
+            'file': 'http://127.0.0.1:8000/media/' + project['file'],
             'languages_and_additions': project['languages_and_additions'],
             'number_of_pages': project['number_of_pages'],
             'delivery_deadline': project['delivery_deadline'],
