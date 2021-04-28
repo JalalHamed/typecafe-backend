@@ -45,5 +45,8 @@ class Offer(models.Model):
         max_length=3, choices=STATUS_CHOICES, default='A')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return str(self.id)

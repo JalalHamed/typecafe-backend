@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.fields import ReadOnlyField
 from .models import *
 
 
@@ -32,10 +31,19 @@ class CreateProjectSerializer(serializers.ModelSerializer):
 
 
 class OfferSerializer(serializers.ModelSerializer):
+    typist = serializers.SerializerMethodField('get_typist_displayname')
+    typist_image = serializers.SerializerMethodField('get_typist_image')
+
     class Meta:
         model = Offer
-        fields = ['project', 'typist', 'offered_price']
+        fields = ['id', 'project', 'typist', 'typist_image', 'offered_price', 'created_at']
+    
+    def get_typist_displayname(self, offer):
+        return offer.typist.displayname
 
+    def get_typist_image(self, offer):
+        if offer.typist.image:
+            return '/media/' + str(offer.typist.image)
 
 class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
