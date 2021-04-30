@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from account.models import Account
-from .models import Project
+from .models import *
 
 
 class TcConsumer(AsyncWebsocketConsumer):
@@ -57,14 +57,30 @@ class TcConsumer(AsyncWebsocketConsumer):
             'status': project['status'],
             'client': client['displayname'],
             'client_email': client['email'],
-            'client_image': client_image
+            'client_image': client_image,
         }))
     
     async def delete_project(self, event):
         await self.send(text_data=json.dumps({
-            'ws_type': 'delete_project',
-            'status': 'delete-project',
-            'id': event['data']['id']
+            'ws_type': 'delete-project',
+            'id': event['data']['id'],
+        }))
+
+    async def new_offer(self, event):
+        offer = await self.get_offer(event['data']['id'])
+        typist = await self.get_client(event['data']['email'])
+        typist_image = ""
+        if typist['image']:
+            typist_image = '/media/' + typist['image']
+        await self.send(text_data=json.dumps({
+            'ws_type': 'new-offer',
+            'id': offer['id'],
+            'project': offer['project_id'],
+            'typist': typist['displayname'],
+            'typist_image': typist_image,
+            'offered_price': offer['offered_price'],
+            'created_at': str(offer['created_at']),
+            'status': offer['status']
         }))
 
     @database_sync_to_async
@@ -74,3 +90,7 @@ class TcConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_client(self, client_email):
         return Account.objects.get(email=client_email).__dict__
+
+    @database_sync_to_async
+    def get_offer(self, offer_id):
+        return Offer.objects.get(id=offer_id).__dict__

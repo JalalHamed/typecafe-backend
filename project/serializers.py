@@ -36,7 +36,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ['id', 'project', 'typist', 'typist_image', 'offered_price', 'created_at']
+        fields = ['id', 'project', 'typist', 'typist_image', 'status', 'offered_price', 'created_at']
     
     def get_typist_displayname(self, offer):
         return offer.typist.displayname
@@ -48,4 +48,4 @@ class OfferSerializer(serializers.ModelSerializer):
 class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
-        fields = ['offered_price', 'project']
+        fields = ['id', 'offered_price', 'project']
