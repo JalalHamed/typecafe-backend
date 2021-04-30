@@ -39,7 +39,7 @@ class TcConsumer(AsyncWebsocketConsumer):
 
     async def new_project(self, event):
         project = await self.get_project(event['data']['id'])
-        client = await self.get_client(event['data']['email'])
+        client = await self.get_client(self.scope['user'])
         client_image = ""
         if client['image']:
             client_image = '/media/' + client['image']
