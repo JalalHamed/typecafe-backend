@@ -110,6 +110,14 @@ class UpdateProfileImageView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class DeleteProfileImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        request.user.image.delete()
+        return Response('Profile picture deleted.', status=status.HTTP_200_OK)
+
+
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
