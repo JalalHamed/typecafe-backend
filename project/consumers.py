@@ -39,7 +39,7 @@ class TcConsumer(AsyncWebsocketConsumer):
 
     async def new_project(self, event):
         project = await self.get_project(event['data']['id'])
-        client = await self.get_client(self.scope['user'])
+        client = await self.get_user_with_id(self.scope['user'].__dict__['token']['user_id'])
         client_image = ""
         if client['image']:
             client_image = '/media/' + client['image']
@@ -67,29 +67,36 @@ class TcConsumer(AsyncWebsocketConsumer):
         }))
 
     async def new_offer(self, event):
+        user = self.scope['user'].__dict__['token']['user_id']
         offer = await self.get_offer(event['data']['id'])
-        typist = await self.get_client(event['data']['email'])
+        typist = await self.get_user_with_email(event['data']['user_email'])
+        project = await self.get_project(event['data']['project_id'])
         typist_image = ""
         if typist['image']:
             typist_image = '/media/' + typist['image']
-        await self.send(text_data=json.dumps({
-            'ws_type': 'new-offer',
-            'id': offer['id'],
-            'project': offer['project_id'],
-            'typist': typist['displayname'],
-            'typist_image': typist_image,
-            'offered_price': offer['offered_price'],
-            'created_at': str(offer['created_at']),
-            'status': offer['status']
-        }))
+        if user == project['client_id']:
+            await self.send(text_data=json.dumps({
+                'ws_type': 'new-offer',
+                'id': offer['id'],
+                'project': offer['project_id'],
+                'typist': typist['displayname'],
+                'typist_image': typist_image,
+                'offered_price': offer['offered_price'],
+                'created_at': str(offer['created_at']),
+                'status': offer['status']
+            }))
 
     @database_sync_to_async
     def get_project(self, project_id):
         return Project.objects.get(id=project_id).__dict__
     
     @database_sync_to_async
-    def get_client(self, client_email):
-        return Account.objects.get(email=client_email).__dict__
+    def get_user_with_id(self, user_id):
+        return Account.objects.get(id=user_id).__dict__
+
+    @database_sync_to_async
+    def get_user_with_email(self, user_email):
+        return Account.objects.get(email=user_email).__dict__
 
     @database_sync_to_async
     def get_offer(self, offer_id):
