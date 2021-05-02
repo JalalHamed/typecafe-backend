@@ -88,6 +88,24 @@ class LoginView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class UserDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        pic = ""
+        if user.image:
+            pic = '/media/' + str(user.image)
+        data = {
+            'displayname': user.displayname,
+            'credit': user.credit,
+            'email': user.email,
+            'id': user.id,
+            'image': pic,
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class UpdateDisplaynameView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -116,23 +134,6 @@ class DeleteProfileImageView(APIView):
     def get(self, request):
         request.user.image.delete()
         return Response('Profile picture deleted.', status=status.HTTP_200_OK)
-
-
-class UserDataView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        pic = ""
-        if user.image:
-            pic = '/media/' + str(user.image)
-        data = {
-            'displayname': user.displayname,
-            'credit': user.credit,
-            'email': user.email,
-            'image': pic,
-        }
-        return Response(data, status=status.HTTP_200_OK)
 
 
 class SupportTicketView(APIView):

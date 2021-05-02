@@ -5,12 +5,12 @@ from .models import *
 class ProjectsSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField('get_client_displayname')
     client_image = serializers.SerializerMethodField('get_client_image')
-    client_email = serializers.SerializerMethodField('get_client_email')
+    client_id = serializers.SerializerMethodField('get_client_id')
 
     class Meta:
         model = Project
         fields = ['id', 'file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline',
-                  'type', 'description', 'created_at', 'client', 'client_email', 'client_image', 'status']
+                  'type', 'description', 'created_at', 'client', 'client_id', 'client_image', 'status']
 
     def get_client_displayname(self, project):
         return project.client.displayname
@@ -19,8 +19,8 @@ class ProjectsSerializer(serializers.ModelSerializer):
         if project.client.image:
             return '/media/' + str(project.client.image)
 
-    def get_client_email(self, project):
-        return project.client.email
+    def get_client_id(self, project):
+        return project.client.id
 
 
 class CreateProjectSerializer(serializers.ModelSerializer):

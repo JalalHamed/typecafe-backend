@@ -60,22 +60,6 @@ class LoginSerializer(serializers.ModelSerializer):
         }
 
 
-class UserDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = ['email', 'displayname', 'credit', 'image']
-
-    def validate(self, attrs):
-        email = attrs.get('email', '')
-        user = Account.objects.get(email=email)
-        return {
-            'email': user.email,
-            'displayname': user.displayname,
-            'credit': user.credit,
-            'image': user.image,
-        }
-
-
 class UpdateDisplaynameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account

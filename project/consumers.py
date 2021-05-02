@@ -21,6 +21,16 @@ class TcConsumer(AsyncWebsocketConsumer):
         
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
+        if data['status'] == 'user-online':
+            await self.channel_layer.group_send('tc', {
+                'type': 'user_online',
+                'data': data,
+            })
+        if data['status'] == 'user-offline':
+            await self.channel_layer.group_send('tc', {
+                'type': 'user_offline',
+                'data': data,
+            })
         if data['status'] == 'new-project':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_project',
@@ -37,9 +47,21 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'data': data,
             })
 
+    async def user_online(self, event):
+        await self.send(text_data=json.dumps({
+            'ws_type': 'user-online',
+            'user_id': event['data']['user_id'],
+        }))
+
+    async def user_offline(self, event):
+        await self.send(text_data=json.dumps({
+            'ws_type': 'user-offline',
+            'user_id': event['data']['user_id'],
+        }))
+
     async def new_project(self, event):
         project = await self.get_project(event['data']['id'])
-        client = await self.get_user_with_id(self.scope['user'].__dict__['token']['user_id'])
+        client = await self.get_user_with_email(event['data']['user_email'])
         client_image = ""
         if client['image']:
             client_image = '/media/' + client['image']
