@@ -6,11 +6,13 @@ class ProjectsSerializer(serializers.ModelSerializer):
     client = serializers.SerializerMethodField('get_client_displayname')
     client_image = serializers.SerializerMethodField('get_client_image')
     client_id = serializers.SerializerMethodField('get_client_id')
+    client_is_online = serializers.SerializerMethodField('get_client_is_online')
+    client_last_login = serializers.SerializerMethodField('get_client_last_login')
 
     class Meta:
         model = Project
         fields = ['id', 'file', 'languages_and_additions', 'number_of_pages', 'delivery_deadline',
-                  'type', 'description', 'created_at', 'client', 'client_id', 'client_image', 'status']
+                  'type', 'description', 'created_at', 'client', 'client_id', 'client_image', 'client_is_online', 'client_last_login', 'status']
 
     def get_client_displayname(self, project):
         return project.client.displayname
@@ -21,6 +23,12 @@ class ProjectsSerializer(serializers.ModelSerializer):
 
     def get_client_id(self, project):
         return project.client.id
+    
+    def get_client_is_online(self, project):
+        return project.client.is_online
+
+    def get_client_last_login(self, project):
+        return project.client.last_login
 
 
 class CreateProjectSerializer(serializers.ModelSerializer):

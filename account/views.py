@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.utils.timezone import now
+from django.contrib.auth.models import update_last_login
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -93,6 +94,8 @@ class UserDataView(APIView):
 
     def get(self, request):
         user = request.user
+        user.is_online = True
+        user.save(update_fields=['is_online'])
         pic = ""
         if user.image:
             pic = '/media/' + str(user.image)
@@ -134,6 +137,17 @@ class DeleteProfileImageView(APIView):
     def get(self, request):
         request.user.image.delete()
         return Response('Profile picture deleted.', status=status.HTTP_200_OK)
+
+
+class UserDisconnectView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user.is_online = False
+        user.save(update_fields=['is_online'])
+        update_last_login(None, user)      
+        return Response(status=status.HTTP_200_OK)
 
 
 class SupportTicketView(APIView):

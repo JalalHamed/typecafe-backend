@@ -46,7 +46,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
     credit = models.IntegerField(default=0)
     image = models.ImageField(null=True, blank=True, upload_to=upload_path)
     date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_online = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

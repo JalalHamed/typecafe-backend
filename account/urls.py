@@ -14,6 +14,7 @@ urlpatterns = [
     path('update-image/', UpdateProfileImageView.as_view(), name='update-image'),
     path('delete-image/', DeleteProfileImageView.as_view(), name='delete-image'),
     path('user-data/', UserDataView.as_view(), name='user-data'),
+    path('user-disconnect/', UserDisconnectView.as_view(), name='user-disconnect'),
     path('support-ticket/', SupportTicketView.as_view(), name='support-ticket'),
     path('support-message/', SupportMessageView.as_view(), name='support-message'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

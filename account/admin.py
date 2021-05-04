@@ -5,7 +5,7 @@ from .models import *
 
 
 class AccountAdmin(UserAdmin):
-    list_display = ('displayname', 'email', 'credit', 'date_joined')
+    list_display = ('displayname', 'id', 'email', 'credit', 'is_online', 'last_login', 'date_joined')
     ordering = ['-date_joined']
     search_fields = ['displayname', 'email']
     fieldsets = (
