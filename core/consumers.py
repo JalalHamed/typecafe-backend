@@ -1,10 +1,8 @@
 import json
-from asgiref.sync import sync_to_async
-from django.utils.timezone import now
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from account.models import *
-from .models import *
+from project.models import *
 
 
 class TcConsumer(AsyncWebsocketConsumer):
@@ -120,10 +118,6 @@ class TcConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user_with_id(self, user_id):
         return Account.objects.get(id=user_id).__dict__
-
-    @database_sync_to_async
-    def get_user_with_id_no_dict(self, user_id):
-        return Account.objects.get(id=user_id)
 
     @database_sync_to_async
     def get_user_with_email(self, user_email):
