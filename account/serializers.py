@@ -35,14 +35,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=256)
     password = serializers.CharField(min_length=8, write_only=True)
-    displayname = serializers.CharField(max_length=20, read_only=True)
-    refresh = serializers.CharField(max_length=256, read_only=True)
     access = serializers.CharField(max_length=256, read_only=True)
+    refresh = serializers.CharField(max_length=256, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['email', 'password', 'displayname',
-                  'credit', 'image', 'refresh', 'access']
+        fields = ['email', 'password', 'access', 'refresh']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -52,11 +50,8 @@ class LoginSerializer(serializers.ModelSerializer):
             raise AuthenticationFailed('Password is not correct.')
         return {
             'email': user.email,
-            'displayname': user.displayname,
-            'credit': user.credit,
-            'image': user.image,
-            'refresh': user.refresh,
             'access': user.access,
+            'refresh': user.refresh,
         }
 
 

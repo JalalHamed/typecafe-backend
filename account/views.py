@@ -23,10 +23,8 @@ class RegistrationView(APIView):
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
         res = {
-            'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'email': user.email,
-            'displayname': user.displayname,
+            'refresh': str(refresh),
         }
         return Response(res, status=status.HTTP_201_CREATED)
 
@@ -105,6 +103,9 @@ class UserDataView(APIView):
             'email': user.email,
             'id': user.id,
             'image': pic,
+            'successful_projects': user.successful_projects,
+            'unsuccessful_projects': user.unsuccessful_projects,
+            'ontime_delivery': user.ontime_delivery,
         }
         return Response(data, status=status.HTTP_200_OK)
 
