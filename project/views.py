@@ -66,10 +66,8 @@ class OffersView(APIView):
 
     def get(self, request):
         offers = []
-        project_query = Project.objects.filter(client=request.user)
-        for x in project_query:
-            offer_query = Offer.objects.filter(project=x)
-            offers.extend(offer_query)
+        for x in Project.objects.filter(client=request.user):
+            offers.extend(Offer.objects.filter(project=x))
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -78,7 +76,10 @@ class DownloadedView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response('ok')
+        downloads = []
+        for x in Downloaded.objects.filter(user=request.user):
+            downloads.append(x.project.id)
+        return Response(downloads, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = DownloadedSerializer(data=request.data)
