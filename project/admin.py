@@ -13,6 +13,10 @@ class OfferAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     search_fields = ['typist']
 
+class DownloadedAdmin(admin.ModelAdmin):
+    list_display = ('user', 'project')
+    search_fields = ['user']
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Offer, OfferAdmin)
+admin.site.register(Downloaded, DownloadedAdmin)

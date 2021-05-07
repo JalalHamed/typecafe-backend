@@ -65,10 +65,23 @@ class OffersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        project_query = Project.objects.filter(client=request.user)
         offers = []
+        project_query = Project.objects.filter(client=request.user)
         for x in project_query:
             offer_query = Offer.objects.filter(project=x)
             offers.extend(offer_query)
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DownloadedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response('ok')
+
+    def post(self, request):
+        serializer = DownloadedSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(status=status.HTTP_201_CREATED)

@@ -57,3 +57,9 @@ class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = ['id', 'offered_price', 'project']
+
+
+class DownloadedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Downloaded
+        fields = ['project']

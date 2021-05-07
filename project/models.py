@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.deletion import CASCADE
 from account.models import Account
 
 
@@ -50,3 +51,11 @@ class Offer(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Downloaded(models.Model):
+    project = models.ForeignKey(Project, on_delete=CASCADE)
+    user = models.ForeignKey(Account, on_delete=CASCADE)
+
+    def __str__(self):
+        return str(self.user)
