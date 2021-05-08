@@ -82,7 +82,8 @@ class DownloadedView(APIView):
         return Response(downloads, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = DownloadedSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
+        if not Downloaded.objects.filter(user=request.user).filter(project=request.data['project']):
+            serializer = DownloadedSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user=request.user)
         return Response(status=status.HTTP_201_CREATED)
