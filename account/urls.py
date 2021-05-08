@@ -13,6 +13,7 @@ urlpatterns = [
          name='update-displayname'),
     path('update-image/', UpdateProfileImageView.as_view(), name='update-image'),
     path('delete-image/', DeleteProfileImageView.as_view(), name='delete-image'),
+    path('user-profile/', UserProfileView.as_view(), name='user-profile'),
     path('user-data/', UserDataView.as_view(), name='user-data'),
     path('user-disconnect/', UserDisconnectView.as_view(), name='user-disconnect'),
     path('support-ticket/', SupportTicketView.as_view(), name='support-ticket'),

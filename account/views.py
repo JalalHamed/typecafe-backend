@@ -87,6 +87,22 @@ class LoginView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class UserProfileView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user = Account.objects.get(id=request.data['id'])
+        data = {
+            'typist_successful_projects': user.typist_successful_projects,
+            'typist_unsuccessful_projects': user.typist_unsuccessful_projects,
+            'ontime_delivery': user.ontime_delivery,
+            'client_successful_projects': user.client_successful_projects,
+            'client_unsuccessful_projects': user.client_unsuccessful_projects,
+            'ontime_payment': user.ontime_payment,
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
