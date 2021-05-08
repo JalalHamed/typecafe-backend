@@ -103,9 +103,12 @@ class UserDataView(APIView):
             'email': user.email,
             'id': user.id,
             'image': pic,
-            'successful_projects': user.successful_projects,
-            'unsuccessful_projects': user.unsuccessful_projects,
+            'typist_successful_projects': user.typist_successful_projects,
+            'typist_unsuccessful_projects': user.typist_unsuccessful_projects,
             'ontime_delivery': user.ontime_delivery,
+            'client_successful_projects': user.client_successful_projects,
+            'client_unsuccessful_projects': user.client_unsuccessful_projects,
+            'ontime_payment': user.ontime_payment,
         }
         return Response(data, status=status.HTTP_200_OK)
 
