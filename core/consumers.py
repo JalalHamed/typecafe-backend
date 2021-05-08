@@ -106,6 +106,7 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'project': offer['project_id'],
                 'typist': typist['displayname'],
                 'typist_image': typist_image,
+                'typist_id': typist['id'],
                 'offered_price': offer['offered_price'],
                 'created_at': str(offer['created_at']),
                 'status': offer['status']
