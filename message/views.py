@@ -3,16 +3,17 @@ from rest_framework import status
 from rest_framework.permissions import *
 from rest_framework.response import Response
 from .models import *
+from .serializers import ReceiverSerializer, SenderSerializer
+
 
 class MessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response('ok', status=status.HTTP_200_OK)
-        # message_query = Message.objects.filter(sender=request.user)
-        # offers = []
-        # for x in project_query:
-        #     offer_query = Offer.objects.filter(project=x)
-        #     offers.extend(offer_query)
-        # serializer = OfferSerializer(offers, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
+        receiver = Message.objects.filter(receiver=request.user).order_by('-issue_date')
+        sender = Message.objects.filter(sender=request.user).order_by('-issue_date')
+        sender_serializer = SenderSerializer(receiver, many=True)
+        receiver_serializer = ReceiverSerializer(sender, many=True)
+        serializer = sender_serializer.data + receiver_serializer.data
+        return Response(serializer, status=status.HTTP_200_OK)
+        
