@@ -99,6 +99,8 @@ class UserProfileView(APIView):
             'client_successful_projects': user.client_successful_projects,
             'client_unsuccessful_projects': user.client_unsuccessful_projects,
             'ontime_payment': user.ontime_payment,
+            'is_online': user.is_online,
+            'last_login': user.last_login,
         }
         return Response(data, status=status.HTTP_200_OK)
 
