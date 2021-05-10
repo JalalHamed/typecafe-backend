@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.permissions import *
 from rest_framework.response import Response
 from .models import *
-from .serializers import ReceiverSerializer, SenderSerializer
+from .serializers import *
 
 
 class MessagesView(APIView):
@@ -17,3 +17,8 @@ class MessagesView(APIView):
         serializer = sender_serializer.data + receiver_serializer.data
         return Response(serializer, status=status.HTTP_200_OK)
         
+    def post(self, request):
+        serializer = CreateMessageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(sender=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -64,3 +64,9 @@ class ReceiverSerializer(serializers.ModelSerializer):
     
     def get_user_last_login(self, message):
         return message.receiver.last_login
+
+
+class CreateMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'receiver', 'content', 'issue_date', 'is_read']
