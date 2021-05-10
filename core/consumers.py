@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from account.models import *
 from project.models import *
+from message.models import *
 
 
 class TcConsumer(AsyncWebsocketConsumer):
@@ -44,6 +45,11 @@ class TcConsumer(AsyncWebsocketConsumer):
         if data['status'] == 'new-offer':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_offer',
+                'data': data,
+            })
+        if data['status'] == 'new-message':
+            await self.channel_layer.group_send('tc', {
+                'type': 'new_message',
                 'data': data,
             })
 
@@ -109,7 +115,21 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'typist_id': typist['id'],
                 'offered_price': offer['offered_price'],
                 'created_at': str(offer['created_at']),
-                'status': offer['status']
+                'status': offer['status'],
+            }))
+
+    async def new_message(self, event):
+        user = self.scope['user'].__dict__['token']['user_id']
+        message = await self.get_message(event['data']['id'])
+        if user == event['data']['receiver']:
+            await self.send(text_data=json.dumps({
+                'ws_type': 'new-message',
+                'id': message['id'],
+                'sor': 'received',
+                'content': message['content'],
+                'sender': event['data']['sender'],
+                'is_read': message['is_read'],
+                'issue_date': str(message['issue_date']),
             }))
 
     @database_sync_to_async
@@ -127,3 +147,7 @@ class TcConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_offer(self, offer_id):
         return Offer.objects.get(id=offer_id).__dict__
+    
+    @database_sync_to_async
+    def get_message(self, message_id):
+        return Message.objects.get(id=message_id).__dict__
