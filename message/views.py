@@ -10,8 +10,8 @@ class MessagesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        receiver = Message.objects.filter(receiver=request.user).order_by('-issue_date')
-        sender = Message.objects.filter(sender=request.user).order_by('-issue_date')
+        receiver = Message.objects.filter(receiver=request.user)
+        sender = Message.objects.filter(sender=request.user)
         sender_serializer = SenderSerializer(receiver, many=True)
         receiver_serializer = ReceiverSerializer(sender, many=True)
         serializer = sender_serializer.data + receiver_serializer.data

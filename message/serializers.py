@@ -3,6 +3,7 @@ from .models import *
 
 
 class SenderSerializer(serializers.ModelSerializer):
+    sor = serializers.SerializerMethodField('get_sent_or_received')
     user = serializers.SerializerMethodField('get_user_displayname')
     user_id = serializers.SerializerMethodField('get_user_id')
     user_image = serializers.SerializerMethodField('get_user_image')
@@ -11,7 +12,10 @@ class SenderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'user', 'user_id', 'user_image', 'user_is_online', 'user_last_login', 'content', 'issue_date', 'is_read']
+        fields = ['id', 'sor', 'user', 'user_id', 'user_image', 'user_is_online', 'user_last_login', 'content', 'issue_date', 'is_read']
+
+    def get_sent_or_received(self, message):
+        return 'received'
 
     def get_user_displayname(self, message):
         return message.sender.displayname
@@ -31,6 +35,7 @@ class SenderSerializer(serializers.ModelSerializer):
 
 
 class ReceiverSerializer(serializers.ModelSerializer):
+    sor = serializers.SerializerMethodField('get_sent_or_received')
     user = serializers.SerializerMethodField('get_user_displayname')
     user_id = serializers.SerializerMethodField('get_user_id')
     user_image = serializers.SerializerMethodField('get_user_image')
@@ -39,7 +44,10 @@ class ReceiverSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'user', 'user_id', 'user_image', 'user_is_online', 'user_last_login', 'content', 'issue_date']
+        fields = ['id', 'sor', 'user', 'user_id', 'user_image', 'user_is_online', 'user_last_login', 'content', 'issue_date', 'is_read']
+
+    def get_sent_or_received(self, message):
+        return 'sent'
 
     def get_user_displayname(self, message):
         return message.receiver.displayname
