@@ -188,3 +188,12 @@ class SupportMessageView(APIView):
         serializer = SupportMessageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(status=status.HTTP_201_CREATED)
+
+
+class SearchDisplaynameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        query = Account.objects.filter(displayname__istartswith=request.data['search'])
+        serializer = SearchDisplaynameSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -77,3 +77,9 @@ class SupportMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupportMessage
         fields = ['client', 'ticket', 'message']
+
+
+class SearchDisplaynameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['displayname', 'image', 'is_online', 'last_login']
