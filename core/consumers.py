@@ -120,16 +120,24 @@ class TcConsumer(AsyncWebsocketConsumer):
 
     async def new_message(self, event):
         user = self.scope['user'].__dict__['token']['user_id']
+        sender = await self.get_user_with_id(event['data']['sender_id'])
         message = await self.get_message(event['data']['id'])
+        sender_image = ""
+        if sender['image']:
+            sender_image = '/media/' + sender['image']
         if user == event['data']['receiver']:
             await self.send(text_data=json.dumps({
                 'ws_type': 'new-message',
                 'id': message['id'],
                 'sor': 'received',
                 'content': message['content'],
-                'sender': event['data']['sender'],
                 'is_read': message['is_read'],
                 'issue_date': str(message['issue_date']),
+                'sender_id': sender['id'],
+                'sender_displayname': sender['displayname'],
+                'sender_image': sender_image,
+                'sender_is_online': sender['is_online'],
+                'sender_last_login': str(sender['last_login']),
             }))
 
     @database_sync_to_async
