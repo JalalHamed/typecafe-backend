@@ -19,6 +19,7 @@ urlpatterns = [
     path('support-ticket/', SupportTicketView.as_view(), name='support-ticket'),
     path('support-message/', SupportMessageView.as_view(), name='support-message'),
     path('search-displayname/', SearchDisplaynameView.as_view(), name='search-displayname'),
+    path('cookie-demo/', CookieDemoView.as_view(), name='cookie-demo'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
