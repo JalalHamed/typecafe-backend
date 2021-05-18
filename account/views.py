@@ -204,12 +204,14 @@ class CookieDemoView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        response = HttpResponse("Cookie Set")  
+        cookie = request.COOKIES.get('jalal')
+        print('=================', cookie)
+        response = HttpResponse(cookie)  
         response.set_cookie(
             key='jalal',
             value='hamed',
-            samesite='Lax',
+            samesite='None',
             httponly=True,
-            secure=False,
-        )  
+            secure=True,
+        )
         return response
