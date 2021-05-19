@@ -5,5 +5,5 @@ app_name = 'message'
 
 urlpatterns = [
     path('', MessagesView.as_view(), name='messages'),
-    # path('send/', SendMessageView.as_view(), name='send')
+    path('read-messages/', ReadMessages.as_view(), name='send'),
 ]

@@ -110,11 +110,9 @@ class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        cookie = request.COOKIES.get('jalal')
-        print('================', cookie)
         user = request.user
         user.is_online = True
-        user.save(update_fields=['is_online'])
+        user.save()
         pic = ""
         if user.image:
             pic = '/media/' + str(user.image)

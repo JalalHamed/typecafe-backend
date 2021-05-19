@@ -22,3 +22,14 @@ class MessagesView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(sender=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ReadMessages(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        query = Message.objects.filter(receiver=request.user).filter(sender=request.data['sender_id'])
+        for x in query:
+            x.is_read = True
+            x.save()
+        return Response(status=status.HTTP_200_OK)
