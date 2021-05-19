@@ -1,5 +1,6 @@
 from random import randint
 from datetime import timedelta
+from django.db.models import Q
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
@@ -196,6 +197,6 @@ class SearchDisplaynameView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        query = Account.objects.filter(displayname__istartswith=request.data['search'])
+        query = Account.objects.filter(displayname__istartswith=request.data['search']).filter(~Q(email=request.user.email))
         serializer = SearchDisplaynameSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
