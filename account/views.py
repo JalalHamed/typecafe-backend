@@ -12,7 +12,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
 from .models import *
-from django.http import HttpResponse  
 
 
 class RegistrationView(APIView):
@@ -110,6 +109,8 @@ class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        cookie = request.COOKIES.get('jalal')
+        print('================', cookie)
         user = request.user
         user.is_online = True
         user.save(update_fields=['is_online'])
@@ -198,20 +199,3 @@ class SearchDisplaynameView(APIView):
         query = Account.objects.filter(displayname__istartswith=request.data['search'])
         serializer = SearchDisplaynameSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class CookieDemoView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        cookie = request.COOKIES.get('jalal')
-        print('=================', cookie)
-        response = HttpResponse(cookie)  
-        response.set_cookie(
-            key='jalal',
-            value='hamed',
-            samesite='None',
-            httponly=True,
-            secure=True,
-        )
-        return response
