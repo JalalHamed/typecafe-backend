@@ -21,7 +21,7 @@ class Project(models.Model):
     languages_and_additions = models.TextField()
     number_of_pages = models.IntegerField()
     delivery_deadline = models.IntegerField()
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     type = models.TextField()
     status = models.CharField(
         max_length=2, choices=STATUS_CHOICES, default='O')
