@@ -50,8 +50,8 @@ class CreateOfferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.user.id == request.data['id']:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if Project.objects.get(id=request.data['project']).client == request.user:
+            return Response('Hmm 😏 interesting', status=status.HTTP_400_BAD_REQUEST)
         query = Offer.objects.filter(typist=request.user).filter(
             project=request.data['project'])
         if query:

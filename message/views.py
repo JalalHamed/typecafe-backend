@@ -18,6 +18,8 @@ class MessagesView(APIView):
         return Response(serializer, status=status.HTTP_200_OK)
         
     def post(self, request):
+        if request.data['receiver'] == request.user.id:
+            return Response('Yeah already prevented but nice try tho 👍', status=status.HTTP_400_BAD_REQUEST)
         serializer = CreateMessageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(sender=request.user)
