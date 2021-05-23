@@ -74,6 +74,20 @@ class OffersView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class OfferedsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        offereds = []
+        for x in Offer.objects.filter(typist=request.user):
+            offereds.append({
+                'project': x.project.id,
+                'offered_price': x.offered_price,
+                'created_at': x.created_at,
+            })
+        return Response(offereds, status=status.HTTP_200_OK)
+
+
 class DownloadedView(APIView):
     permission_classes = [IsAuthenticated]
 
