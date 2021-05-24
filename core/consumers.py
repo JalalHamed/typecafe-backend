@@ -47,6 +47,11 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'type': 'new_offer',
                 'data': data,
             })
+        if data['status'] == 'offer-delete':
+            await self.channel_layer.group_send('tc', {
+                'type': 'offer_delete',
+                'data': data,
+            })
         if data['status'] == 'new-message':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_message',
@@ -117,6 +122,14 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'created_at': str(offer['created_at']),
                 'status': offer['status'],
             }))
+    
+    async def offer_delete(self, event):
+        user = self.scope['user'].__dict__['token']['user_id']
+        if user == event['data']['project_owner']:
+            await self.send(text_data=json.dumps({
+                'ws_type': 'delete-offer',
+                'id': event['data']['id'],
+            })) 
 
     async def new_message(self, event):
         user = self.scope['user'].__dict__['token']['user_id']

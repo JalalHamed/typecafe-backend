@@ -39,11 +39,10 @@ class DeleteProjectView(APIView):
 
     def post(self, request):
         project = Project.objects.get(id=request.data['id'])
-        if project.client == request.user:
-            project.delete()
-            return Response(status=status.HTTP_200_OK)
-        else:
+        if project.client != request.user:
             return Response('lol. nice try', status=status.HTTP_403_FORBIDDEN)
+        project.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class CreateOfferView(APIView):
@@ -61,6 +60,17 @@ class CreateOfferView(APIView):
         serializer.save(project=Project.objects.get(
             id=request.data['project']), typist=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class DeleteOfferView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        offer = Offer.objects.get(id=request.data['id'])
+        if offer.typist != request.user:
+            return Response('You are not authorized to delete this offer.', status=status.HTTP_403_FORBIDDEN)
+        offer.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class OffersView(APIView):
@@ -81,6 +91,7 @@ class OfferedsView(APIView):
         offereds = []
         for x in Offer.objects.filter(typist=request.user):
             offereds.append({
+                'id': x.id,
                 'project': x.project.id,
                 'offered_price': x.offered_price,
                 'created_at': x.created_at,
