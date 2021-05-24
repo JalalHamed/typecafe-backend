@@ -49,8 +49,15 @@ class CreateOfferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        if request.data['offered_price'] < 1560:
+            return Response('For real?! What happed to your ambition?', status=status.HTTP_400_BAD_REQUEST)
+        project = Project.objects.get(id=request.data['project'])
+        eppwc = request.data['offered_price'] - request.data['offered_price'] * 0.1 # earning per page with commission 
+        total_price = eppwc * project.number_of_pages
+        if request.user.credit <  total_price:
+            return Response('Not enough credit player, you already know.', status=status.HTTP_400_BAD_REQUEST)
         if Project.objects.get(id=request.data['project']).client == request.user:
-            return Response('Hmm 😏 interesting', status=status.HTTP_400_BAD_REQUEST)
+            return Response('Hmm.. interesting.', status=status.HTTP_400_BAD_REQUEST)
         query = Offer.objects.filter(typist=request.user).filter(
             project=request.data['project'])
         if query:
