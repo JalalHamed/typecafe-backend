@@ -5,11 +5,11 @@ app_name = 'project'
 
 urlpatterns = [
     path('projects/', ProjectView.as_view(), name='projects'),
-    path('myprojects/', MyProjectsView.as_view(), name='my-projects'),
-    path('createproject/', CreateProjectView.as_view(), name='createproject'),
-    path('deleteproject/', DeleteProjectView.as_view(), name='deleteproject'),
-    path('createoffer/', CreateOfferView.as_view(), name='createoffer'),
-    path('deleteoffer/', DeleteOfferView.as_view(), name='delete-offer'),
+    path('my-projects/', MyProjectsView.as_view(), name='my-projects'),
+    path('create-project/', CreateProjectView.as_view(), name='createproject'),
+    path('delete-project/', DeleteProjectView.as_view(), name='deleteproject'),
+    path('create-offer/', CreateOfferView.as_view(), name='createoffer'),
+    path('delete-offer/', DeleteOfferView.as_view(), name='delete-offer'),
     path('offers/', OffersView.as_view(), name='offers'),
     path('offereds/', OfferedsView.as_view(), name='offered'),
     path('downloaded/', DownloadedView.as_view(), name='downloaded')
