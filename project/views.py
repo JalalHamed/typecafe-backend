@@ -91,7 +91,7 @@ class RejectOfferView(APIView):
         if request.user != project_owner:
             return Response('How that helps?', status=status.HTTP_403_FORBIDDEN)
         offer.status = 'REJ'
-        # offer.save()
+        offer.save()
         return Response(offer.status)
 
 
@@ -117,6 +117,7 @@ class OfferedsView(APIView):
                 'project': x.project.id,
                 'offered_price': x.offered_price,
                 'created_at': x.created_at,
+                'status': x.status,
             })
         return Response(offereds, status=status.HTTP_200_OK)
 

@@ -165,6 +165,7 @@ class TcConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'ws_type': 'offer-rejected',
                 'project': offer['project_id'],
+                'id': offer['id']
             }))
 
     @database_sync_to_async
