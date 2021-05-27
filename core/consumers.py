@@ -13,13 +13,13 @@ class TcConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-    
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             'tc',
             self.channel_name
         )
-        
+
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         if data['status'] == 'user-online':
@@ -55,6 +55,11 @@ class TcConsumer(AsyncWebsocketConsumer):
         if data['status'] == 'new-message':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_message',
+                'data': data,
+            })
+        if data['status'] == 'offer-rejected':
+            await self.channel_layer.group_send('tc', {
+                'type': 'offer_rejected',
                 'data': data,
             })
 
@@ -95,7 +100,7 @@ class TcConsumer(AsyncWebsocketConsumer):
             'client_is_online': client['is_online'],
             'client_last_login': str(client['last_login']),
         }))
-    
+
     async def delete_project(self, event):
         await self.send(text_data=json.dumps({
             'ws_type': 'delete-project',
@@ -122,14 +127,14 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'created_at': str(offer['created_at']),
                 'status': offer['status'],
             }))
-    
+
     async def offer_delete(self, event):
         user = self.scope['user'].__dict__['token']['user_id']
         if user == event['data']['project_owner']:
             await self.send(text_data=json.dumps({
                 'ws_type': 'delete-offer',
                 'id': event['data']['id'],
-            })) 
+            }))
 
     async def new_message(self, event):
         user = self.scope['user'].__dict__['token']['user_id']
@@ -153,10 +158,19 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'sender_last_login': str(sender['last_login']),
             }))
 
+    async def offer_rejected(self, event):
+        user = self.scope['user'].__dict__['token']['user_id']
+        offer = await self.get_offer(event['data']['id'])
+        if user == offer['typist_id']:
+            await self.send(text_data=json.dumps({
+                'ws_type': 'offer-rejected',
+                'project': offer['project_id'],
+            }))
+
     @database_sync_to_async
     def get_project(self, project_id):
         return Project.objects.get(id=project_id).__dict__
-    
+
     @database_sync_to_async
     def get_user_with_id(self, user_id):
         return Account.objects.get(id=user_id).__dict__
@@ -168,7 +182,7 @@ class TcConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_offer(self, offer_id):
         return Offer.objects.get(id=offer_id).__dict__
-    
+
     @database_sync_to_async
     def get_message(self, message_id):
         return Message.objects.get(id=message_id).__dict__

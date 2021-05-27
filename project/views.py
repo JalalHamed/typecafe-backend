@@ -50,18 +50,20 @@ class CreateOfferView(APIView):
 
     def post(self, request):
         if request.data['offered_price'] < 1560:
-            return Response('For real?! What happed to your ambition?', status=status.HTTP_400_BAD_REQUEST)
+            return Response('Ambition? No?', status=status.HTTP_403_FORBIDDEN)
         project = Project.objects.get(id=request.data['project'])
-        eppwc = request.data['offered_price'] - request.data['offered_price'] * 0.1 # earning per page with commission 
+        # earning per page with commission
+        eppwc = request.data['offered_price'] - \
+            request.data['offered_price'] * 0.1
         total_price = eppwc * project.number_of_pages
-        if request.user.credit <  total_price:
-            return Response('Not enough credit player, you already know.', status=status.HTTP_400_BAD_REQUEST)
+        if request.user.credit < total_price:
+            return Response('Not enough credits player, you already know.', status=status.HTTP_403_FORBIDDEN)
         if Project.objects.get(id=request.data['project']).client == request.user:
-            return Response('Hmm.. interesting.', status=status.HTTP_400_BAD_REQUEST)
+            return Response('Hmm.. interesting.', status=status.HTTP_403_FORBIDDEN)
         query = Offer.objects.filter(typist=request.user).filter(
             project=request.data['project'])
         if query:
-            return Response({'error': 'You have already made a request for this project.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'You have already made a request for this project.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = CreateOfferSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(project=Project.objects.get(
@@ -75,7 +77,7 @@ class DeleteOfferView(APIView):
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.typist != request.user:
-            return Response('You are not authorized to delete this offer.', status=status.HTTP_403_FORBIDDEN)
+            return Response('"How dare you try to take what you didn\'t help me to get?" -Eminem', status=status.HTTP_403_FORBIDDEN)
         offer.delete()
         return Response(status=status.HTTP_200_OK)
 
@@ -85,8 +87,12 @@ class RejectOfferView(APIView):
 
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
-        project = offer.project.id
-        print('===============', project)
+        project_owner = offer.project.client
+        if request.user != project_owner:
+            return Response('How that helps?', status=status.HTTP_403_FORBIDDEN)
+        offer.status = 'REJ'
+        # offer.save()
+        return Response(offer.status)
 
 
 class OffersView(APIView):
