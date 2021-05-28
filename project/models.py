@@ -45,6 +45,8 @@ class Offer(models.Model):
     status = models.CharField(
         max_length=3, choices=STATUS_CHOICES, default='A')
     created_at = models.DateTimeField(auto_now_add=True)
+    # typed_file = models.FileField(upload_to=upload_path, null=True, blank=True)
+    # typed_pages_count = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']

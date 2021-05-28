@@ -1,4 +1,6 @@
+from os import stat
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.permissions import *
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -82,6 +84,26 @@ class DeleteOfferView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class AcceptOffer(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        offer = Offer.objects.get(id=request.data['id'])
+        project_owner = offer.project.client
+        total_price = offer.offered_price * offer.project.number_of_pages
+        typist_total_price = total_price - total_price * 0.1
+        client_total_price = total_price + total_price * 0.1
+        if request.user != project_owner:
+            return Response('You know you can\'t do that right?', status=status.HTTP_403_FORBIDDEN)
+        if request.user.credit < client_total_price:
+            return Response('Not enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
+        if offer.typist.credit < typist_total_price:
+            return Response('Typist Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
+        # offer.status = 'ACC'
+        # offer.save()
+        return Response(status=status.HTTP_200_OK)
+
+
 class RejectOfferView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -92,7 +114,7 @@ class RejectOfferView(APIView):
             return Response('How that helps?', status=status.HTTP_403_FORBIDDEN)
         offer.status = 'REJ'
         offer.save()
-        return Response(offer.status)
+        return Response(status=status.HTTP_200_OK)
 
 
 class OffersView(APIView):
