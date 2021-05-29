@@ -99,9 +99,23 @@ class AcceptOffer(APIView):
             return Response('Not enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
         if offer.typist.credit < typist_total_price:
             return Response('Typist Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
-        # offer.status = 'ACC'
-        # offer.save()
-        return Response(status=status.HTTP_200_OK)
+        request.user.credit -= client_total_price
+        request.user.save()
+        offer.typist.credit -= typist_total_price
+        offer.typist.save()
+        offer.status = 'ACC'
+        offer.save()
+        offer.project.status = 'IP'
+        offer.project.save()
+        projectOffers = Offer.objects.filter(project=offer.project)
+        for x in projectOffers:
+            if x.id != request.data['id']:
+                x.delete()
+        typistOffers = Offer.objects.filter(typist=offer.typist)
+        for x in typistOffers:
+            if x.id != request.data['id']:
+                x.delete()
+        return Response({'credit': request.user.credit}, status=status.HTTP_200_OK)
 
 
 class RejectOfferView(APIView):
