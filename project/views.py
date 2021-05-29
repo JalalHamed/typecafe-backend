@@ -53,6 +53,12 @@ class CreateOfferView(APIView):
     def post(self, request):
         if request.data['offered_price'] < 1560:
             return Response('Ambition? No?', status=status.HTTP_403_FORBIDDEN)
+        try:
+            query = Offer.objects.filter(
+                typist=request.user).get(status="ACC")
+            return Response(query.project.id, status=status.HTTP_403_FORBIDDEN)
+        except:
+            pass
         project = Project.objects.get(id=request.data['project'])
         # earning per page with commission
         eppwc = request.data['offered_price'] - \
