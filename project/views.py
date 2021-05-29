@@ -84,7 +84,7 @@ class DeleteOfferView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class AcceptOffer(APIView):
+class AcceptOfferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
