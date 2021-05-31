@@ -1,6 +1,5 @@
-from os import stat
+from django.utils import timezone
 from rest_framework import status
-from rest_framework import permissions
 from rest_framework.permissions import *
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -88,6 +87,18 @@ class DeleteOfferView(APIView):
             return Response('"How dare you try to take what you didn\'t help me to get?" -Eminem', status=status.HTTP_403_FORBIDDEN)
         offer.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class ClientAcceptView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        offer = Offer.objects.get(id=request.data['id'])
+        if offer.project.client != request.user:
+            return Response('This is not your offer to accept.', status=status.HTTP_403_FORBIDDEN)
+        offer.client_accept = timezone.now()
+        offer.save()
+        return Response(offer.client_accept, status=status.HTTP_200_OK)
 
 
 class AcceptOfferView(APIView):

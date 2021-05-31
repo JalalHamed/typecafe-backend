@@ -62,6 +62,11 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'type': 'offer_rejected',
                 'data': data,
             })
+        if data['status'] == 'client-accept':
+            await self.channel_layer.group_send('tc', {
+                'type': 'client_accept',
+                'data': data,
+            })
 
     async def user_online(self, event):
         await self.send(text_data=json.dumps({
@@ -165,7 +170,17 @@ class TcConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'ws_type': 'offer-rejected',
                 'project': offer['project_id'],
-                'id': offer['id']
+                'id': offer['id'],
+            }))
+
+    async def client_accept(self, event):
+        user = self.scope['user'].__dict__['token']['user_id']
+        offer = await self.get_offer(event['data']['id'])
+        if user == offer['typist_id']:
+            await self.send(text_data=json.dumps({
+                'ws_type': 'client-accept',
+                'project': offer['project_id'],
+                'date': event['data']['issued_at'],
             }))
 
     @database_sync_to_async
