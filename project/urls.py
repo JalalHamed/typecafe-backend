@@ -11,6 +11,8 @@ urlpatterns = [
     path('create-offer/', CreateOfferView.as_view(), name='createoffer'),
     path('delete-offer/', DeleteOfferView.as_view(), name='delete-offer'),
     path('client-accept/', ClientAcceptView.as_view(), name='client-accept'),
+    path('typist-failed-to-accept/', TypistFailedToAccept.as_view(),
+         name='typist-failed-to-accept'),
     path('accept-offer/', AcceptOfferView.as_view(), name='accepted-offer'),
     path('reject-offer/', RejectOfferView.as_view(), name='reject-offer'),
     path('offers/', OffersView.as_view(), name='offers'),

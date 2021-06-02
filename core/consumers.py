@@ -180,7 +180,9 @@ class TcConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'ws_type': 'client-accept',
                 'project': offer['project_id'],
-                'date': event['data']['issued_at'],
+                'client': event['data']['client'],
+                'issued_at': event['data']['issued_at'],
+                'offer': offer['id'],
             }))
 
     @database_sync_to_async

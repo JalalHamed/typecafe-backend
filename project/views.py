@@ -1,3 +1,4 @@
+from django.db.models.query import NamedValuesListIterable
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import *
@@ -99,6 +100,18 @@ class ClientAcceptView(APIView):
         offer.client_accept = timezone.now()
         offer.save()
         return Response(offer.client_accept, status=status.HTTP_200_OK)
+
+
+class TypistFailedToAccept(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        offer = Offer.objects.get(id=request.data['id'])
+        if offer.typist != request.user:
+            return Response('Hm nice try.', status=status.HTTP_403_FORBIDDEN)
+        offer.client_accept = None
+        offer.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 class AcceptOfferView(APIView):
