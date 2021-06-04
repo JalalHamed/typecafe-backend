@@ -62,9 +62,14 @@ class OfferSerializer(serializers.ModelSerializer):
 
 
 class CreateOfferSerializer(serializers.ModelSerializer):
+    typist_id = serializers.SerializerMethodField('get_typist_id')
+
     class Meta:
         model = Offer
-        fields = ['id', 'offered_price', 'project', 'status']
+        fields = ['id', 'offered_price', 'project', 'status', 'typist_id']
+
+    def get_typist_id(self, offer):
+        return offer.typist.id
 
 
 class DownloadedSerializer(serializers.ModelSerializer):

@@ -184,6 +184,7 @@ class OfferedsView(APIView):
                 'offered_price': x.offered_price,
                 'created_at': x.created_at,
                 'status': x.status,
+                'typist_id': x.typist.id,
             })
         return Response(offereds, status=status.HTTP_200_OK)
 
