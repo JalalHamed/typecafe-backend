@@ -5,11 +5,12 @@ from .models import *
 
 
 class AccountAdmin(UserAdmin):
-    list_display = ('displayname', 'id', 'email', 'credit', 'is_online', 'last_login', 'date_joined')
+    list_display = ('displayname', 'id', 'email', 'credit',
+                    'is_online', 'last_login', 'date_joined')
     ordering = ['-date_joined']
     search_fields = ['displayname', 'email']
     fieldsets = (
-        ('Details', {'fields': ('displayname', 'email', 'image',)}),
+        ('Details', {'fields': ('displayname', 'email', 'image', 'is_online',)}),
         ('Credits', {'fields': ('credit',)}),
     )
     add_fieldsets = (

@@ -53,7 +53,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     ontime_payment = models.IntegerField(default=0)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(blank=True, null=True)
-    is_online = models.BooleanField(default=False)
+    is_online = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

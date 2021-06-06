@@ -1,6 +1,8 @@
 import json
+from django.db.models import F
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from django.utils import timezone
 from account.models import *
 from project.models import *
 from message.models import *
@@ -13,25 +15,26 @@ class TcConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
+        await self.update_user_inc(self.scope['user'])
+        # await self.channel_layer.group_send('tc', {
+        #     'type': 'user_online',
+        #     'data': {'id': self.scope['user']},
+        # })
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             'tc',
             self.channel_name
         )
+        await self.update_user_dec(self.scope['user'])
+        await self.update_user_last_login(self.scope['user'])
+        # await self.channel_layer.group_send('tc', {
+        #     'type': 'user_offline',
+        #     'data': {'id': self.scope['user']},
+        # })
 
-    async def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data=None):
         data = json.loads(text_data)
-        if data['status'] == 'user-online':
-            await self.channel_layer.group_send('tc', {
-                'type': 'user_online',
-                'data': data,
-            })
-        if data['status'] == 'user-offline':
-            await self.channel_layer.group_send('tc', {
-                'type': 'user_offline',
-                'data': data,
-            })
         if data['status'] == 'new-project':
             await self.channel_layer.group_send('tc', {
                 'type': 'new_project',
@@ -69,15 +72,17 @@ class TcConsumer(AsyncWebsocketConsumer):
             })
 
     async def user_online(self, event):
+        # data = json.loads(event)
+        print('--------------- ' + event['data'])
         await self.send(text_data=json.dumps({
             'ws_type': 'user-online',
-            'user_id': event['data']['user_id'],
+            # 'user_id': event['data'],
         }))
 
     async def user_offline(self, event):
         await self.send(text_data=json.dumps({
             'ws_type': 'user-offline',
-            'user_id': event['data']['user_id'],
+            # 'user_id': event['data'],
         }))
 
     async def new_project(self, event):
@@ -185,22 +190,36 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'offer': offer['id'],
             }))
 
-    @database_sync_to_async
+    @ database_sync_to_async
     def get_project(self, project_id):
         return Project.objects.get(id=project_id).__dict__
 
-    @database_sync_to_async
+    @ database_sync_to_async
     def get_user_with_id(self, user_id):
         return Account.objects.get(id=user_id).__dict__
 
-    @database_sync_to_async
+    @ database_sync_to_async
     def get_user_with_email(self, user_email):
         return Account.objects.get(email=user_email).__dict__
 
-    @database_sync_to_async
+    @ database_sync_to_async
     def get_offer(self, offer_id):
         return Offer.objects.get(id=offer_id).__dict__
 
-    @database_sync_to_async
+    @ database_sync_to_async
     def get_message(self, message_id):
         return Message.objects.get(id=message_id).__dict__
+
+    @ database_sync_to_async
+    def update_user_inc(self, user):
+        print('-------- online ' + str(user.id) + ' --------')
+        return Account.objects.filter(id=user.id).update(is_online=F('is_online') + 1)
+
+    @ database_sync_to_async
+    def update_user_dec(self, user):
+        print('--------offline ' + str(user.id) + ' --------')
+        return Account.objects.filter(id=user.id).update(is_online=F('is_online') - 1)
+
+    @ database_sync_to_async
+    def update_user_last_login(self, user):
+        return Account.objects.filter(id=user.id).update(last_login=timezone.now())

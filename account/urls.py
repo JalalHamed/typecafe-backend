@@ -10,7 +10,6 @@ urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('user-data/', UserDataView.as_view(), name='user-data'),
-    path('user-disconnect/', UserDisconnectView.as_view(), name='user-disconnect'),
     path('update-displayname/', UpdateDisplaynameView.as_view(),
          name='update-displayname'),
     path('update-image/', UpdateProfileImageView.as_view(), name='update-image'),
@@ -18,7 +17,8 @@ urlpatterns = [
     path('user-profile/', UserProfileView.as_view(), name='user-profile'),
     path('support-ticket/', SupportTicketView.as_view(), name='support-ticket'),
     path('support-message/', SupportMessageView.as_view(), name='support-message'),
-    path('search-displayname/', SearchDisplaynameView.as_view(), name='search-displayname'),
+    path('search-displayname/', SearchDisplaynameView.as_view(),
+         name='search-displayname'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
