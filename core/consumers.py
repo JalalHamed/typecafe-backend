@@ -16,22 +16,24 @@ class TcConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
         await self.update_user_inc(self.scope['user'])
-        # await self.channel_layer.group_send('tc', {
-        #     'type': 'user_online',
-        #     'data': {'id': self.scope['user']},
-        # })
+        await self.channel_layer.group_send('tc', {
+            'type': 'user_online',
+            'user_id': self.scope['user'].id,
+        })
 
     async def disconnect(self, close_code):
+        await self.update_user_dec(self.scope['user'])
+        online_count = await self.get_user_online_count(self.scope['user'].id)
+        if online_count == 0:
+            await self.update_user_last_login(self.scope['user'])
+            await self.channel_layer.group_send('tc', {
+                'type': 'user_offline',
+                'user_id': self.scope['user'].id,
+            })
         await self.channel_layer.group_discard(
             'tc',
             self.channel_name
         )
-        await self.update_user_dec(self.scope['user'])
-        await self.update_user_last_login(self.scope['user'])
-        # await self.channel_layer.group_send('tc', {
-        #     'type': 'user_offline',
-        #     'data': {'id': self.scope['user']},
-        # })
 
     async def receive(self, text_data=None):
         data = json.loads(text_data)
@@ -72,17 +74,15 @@ class TcConsumer(AsyncWebsocketConsumer):
             })
 
     async def user_online(self, event):
-        # data = json.loads(event)
-        print('--------------- ' + event['data'])
         await self.send(text_data=json.dumps({
             'ws_type': 'user-online',
-            # 'user_id': event['data'],
+            'user_id': event['user_id'],
         }))
 
     async def user_offline(self, event):
         await self.send(text_data=json.dumps({
             'ws_type': 'user-offline',
-            # 'user_id': event['data'],
+            'user_id': event['user_id'],
         }))
 
     async def new_project(self, event):
@@ -211,13 +211,15 @@ class TcConsumer(AsyncWebsocketConsumer):
         return Message.objects.get(id=message_id).__dict__
 
     @ database_sync_to_async
+    def get_user_online_count(self, user_id):
+        return Account.objects.get(id=user_id).is_online
+
+    @ database_sync_to_async
     def update_user_inc(self, user):
-        print('-------- online ' + str(user.id) + ' --------')
         return Account.objects.filter(id=user.id).update(is_online=F('is_online') + 1)
 
     @ database_sync_to_async
     def update_user_dec(self, user):
-        print('--------offline ' + str(user.id) + ' --------')
         return Account.objects.filter(id=user.id).update(is_online=F('is_online') - 1)
 
     @ database_sync_to_async

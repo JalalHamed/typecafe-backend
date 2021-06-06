@@ -1,6 +1,9 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import *
+from .models import Account
+
+Account.objects.all().update(is_online=0)
 
 app_name = 'account'
 
