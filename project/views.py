@@ -102,7 +102,7 @@ class ClientAcceptView(APIView):
 
         def CheckForTypistAccept():
             if not offer.typist_ready:
-                offer.clien_accept = None
+                offer.client_accept = None
                 offer.save()
 
         timer = threading.Timer(30.0, CheckForTypistAccept)
