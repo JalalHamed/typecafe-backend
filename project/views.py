@@ -1,3 +1,4 @@
+import threading
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import *
@@ -98,17 +99,25 @@ class ClientAcceptView(APIView):
             return Response('This is not your offer to accept.', status=status.HTTP_403_FORBIDDEN)
         offer.client_accept = timezone.now()
         offer.save()
+
+        def CheckForTypistAccept():
+            if not offer.typist_ready:
+                offer.clien_accept = None
+                offer.save()
+
+        timer = threading.Timer(30.0, CheckForTypistAccept)
+        timer.start()
         return Response(offer.client_accept, status=status.HTTP_200_OK)
 
 
-class TypistFailedToAccept(APIView):
+class TypistDeclareReadyView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.typist != request.user:
-            return Response('Hm nice try.', status=status.HTTP_403_FORBIDDEN)
-        offer.client_accept = None
+            return Response('Nope. No can do.', status=status.HTTP_403_FORBIDDEN)
+        offer.typist_ready = True
         offer.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -184,6 +193,7 @@ class OfferedsView(APIView):
                 'created_at': x.created_at,
                 'status': x.status,
                 'typist_id': x.typist.id,
+                'client_accept': x.client_accept,
             })
         return Response(offereds, status=status.HTTP_200_OK)
 
