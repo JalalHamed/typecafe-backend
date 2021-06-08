@@ -116,7 +116,8 @@ class TypistDeclareReadyView(APIView):
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.typist != request.user:
-            return Response('Nope. No can do.', status=status.HTTP_403_FORBIDDEN)
+            return Response('How that\'s gonna help?', status=status.HTTP_403_FORBIDDEN)
+        # if offer.client_accept
         offer.typist_ready = True
         offer.save()
         return Response(status=status.HTTP_200_OK)
