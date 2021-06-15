@@ -43,7 +43,7 @@ class Offer(models.Model):
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)
     offered_price = models.IntegerField()
     client_accept = models.DateTimeField(blank=True, null=True)
-    typist_ready = models.BooleanField(default=False)
+    typist_ready = models.DateTimeField(blank=True, null=True)
     status = models.CharField(
         max_length=3, choices=STATUS_CHOICES, default='A')
     created_at = models.DateTimeField(auto_now_add=True)

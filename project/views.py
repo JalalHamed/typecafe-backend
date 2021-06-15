@@ -1,5 +1,6 @@
 import threading
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.permissions import *
 from rest_framework.views import APIView
@@ -100,12 +101,13 @@ class ClientAcceptView(APIView):
         offer.client_accept = timezone.now()
         offer.save()
 
-        def CheckForTypistAccept():
+        def CheckForTypistDeclareReady():
+            print('--------- ' + str(offer.typist_ready) + ' ---------')
             if not offer.typist_ready:
                 offer.client_accept = None
                 offer.save()
 
-        timer = threading.Timer(30.0, CheckForTypistAccept)
+        timer = threading.Timer(30.0, CheckForTypistDeclareReady)
         timer.start()
         return Response(offer.client_accept, status=status.HTTP_200_OK)
 
@@ -115,15 +117,21 @@ class TypistDeclareReadyView(APIView):
 
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
+        project = offer.project
         if offer.typist != request.user:
             return Response('How that\'s gonna help?', status=status.HTTP_403_FORBIDDEN)
         if offer.client_accept:
-            return Response('ye okay')
+            project.status = 'IP'
+            project.save()
+            Offer.objects.filter(
+                project=project).filter(~Q(id=request.data['id'])).delete()
+            offer.status = 'ACC'
+            offer.typist_ready = timezone.now()
+            offer.save()
+            print('--------- ' + str(offer.typist_ready) + ' ---------')
+            return Response(status=status.HTTP_200_OK)
         else:
-            return Response('no bro')
-        # offer.typist_ready = True
-        # offer.save()
-        return Response(status=status.HTTP_200_OK)
+            return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
 
 
 class AcceptOfferView(APIView):
