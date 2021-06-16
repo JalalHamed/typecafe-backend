@@ -6,9 +6,9 @@ from .models import Account, SupportMessage, SupportTicket
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
-        style={'input_type': 'password'}, write_only=True, required=True)
+        min_length=8, style={'input_type': 'password'}, write_only=True, required=True)
     confirm_password = serializers.CharField(
-        style={'input_type': 'password'}, write_only=True)
+        min_length=8, style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = Account

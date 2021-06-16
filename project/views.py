@@ -102,7 +102,7 @@ class ClientAcceptView(APIView):
         offer.save()
 
         def CheckForTypistDeclareReady():
-            print('--------- ' + str(offer.typist_ready) + ' ---------')
+            offer = Offer.objects.get(id=request.data['id'])
             if not offer.typist_ready:
                 offer.client_accept = None
                 offer.save()
@@ -117,18 +117,23 @@ class TypistDeclareReadyView(APIView):
 
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
-        project = offer.project
+        total_price = offer.offered_price * offer.project.number_of_pages
+        typist_total_price = total_price - total_price * 0.1
+        client_total_price = total_price + total_price * 0.1
         if offer.typist != request.user:
             return Response('How that\'s gonna help?', status=status.HTTP_403_FORBIDDEN)
+        if request.user.credit < client_total_price:
+            return Response('Not enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
+        if offer.typist.credit < typist_total_price:
+            return Response('Typist Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
         if offer.client_accept:
-            project.status = 'IP'
-            project.save()
+            offer.project.status = 'IP'
+            offer.project.save()
             Offer.objects.filter(
-                project=project).filter(~Q(id=request.data['id'])).delete()
+                project=offer.project).filter(~Q(id=request.data['id'])).delete()
             offer.status = 'ACC'
             offer.typist_ready = timezone.now()
             offer.save()
-            print('--------- ' + str(offer.typist_ready) + ' ---------')
             return Response(status=status.HTTP_200_OK)
         else:
             return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
