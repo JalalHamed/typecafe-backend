@@ -1,5 +1,5 @@
 import json
-from django.db.models import F
+from django.db.models import F, Q
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.utils import timezone
@@ -200,6 +200,7 @@ class TcConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'ws_type': 'in-progress',
             'project': project['id'],
+            'typist': event['data']['typist'],
         }))
 
     @ database_sync_to_async

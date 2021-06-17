@@ -98,6 +98,12 @@ class ClientAcceptView(APIView):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.project.client != request.user:
             return Response('This is not your offer to accept.', status=status.HTTP_403_FORBIDDEN)
+        query = Offer.objects.filter(typist=offer.typist)
+        for x in query:
+            if x.typist_ready:
+                return Response('Typist is already busy with another project.', status=status.HTTP_400_BAD_REQUEST)
+            if x.client_accept:
+                return Response('Typist already has another project to declare ready for.', status=status.HTTP_400_BAD_REQUEST)
         offer.client_accept = timezone.now()
         offer.save()
 
@@ -129,48 +135,16 @@ class TypistDeclareReadyView(APIView):
         if offer.client_accept:
             offer.project.status = 'IP'
             offer.project.save()
-            Offer.objects.filter(
-                project=offer.project).filter(~Q(id=request.data['id'])).delete()
+            Offer.objects.filter(project=offer.project).filter(
+                ~Q(id=request.data['id'])).delete()  # ~Q means not equal
+            Offer.objects.filter(typist=request.user).filter(
+                ~Q(id=request.data['id'])).delete()
             offer.status = 'ACC'
             offer.typist_ready = timezone.now()
             offer.save()
             return Response(status=status.HTTP_200_OK)
         else:
             return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
-
-
-class AcceptOfferView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        offer = Offer.objects.get(id=request.data['id'])
-        project_owner = offer.project.client
-        total_price = offer.offered_price * offer.project.number_of_pages
-        typist_total_price = total_price - total_price * 0.1
-        client_total_price = total_price + total_price * 0.1
-        if request.user != project_owner:
-            return Response('You know you can\'t do that right?', status=status.HTTP_403_FORBIDDEN)
-        if request.user.credit < client_total_price:
-            return Response('Not enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
-        if offer.typist.credit < typist_total_price:
-            return Response('Typist Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
-        request.user.credit -= client_total_price
-        request.user.save()
-        offer.typist.credit -= typist_total_price
-        offer.typist.save()
-        offer.status = 'ACC'
-        offer.save()
-        offer.project.status = 'IP'
-        offer.project.save()
-        projectOffers = Offer.objects.filter(project=offer.project)
-        for x in projectOffers:
-            if x.id != request.data['id']:
-                x.delete()
-        typistOffers = Offer.objects.filter(typist=offer.typist)
-        for x in typistOffers:
-            if x.id != request.data['id']:
-                x.delete()
-        return Response({'credit': request.user.credit}, status=status.HTTP_200_OK)
 
 
 class RejectOfferView(APIView):

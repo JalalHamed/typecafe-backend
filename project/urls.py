@@ -13,7 +13,6 @@ urlpatterns = [
     path('client-accept/', ClientAcceptView.as_view(), name='client-accept'),
     path('typist-declare-ready/', TypistDeclareReadyView.as_view(),
          name='typist-declare-ready'),
-    path('accept-offer/', AcceptOfferView.as_view(), name='accepted-offer'),
     path('reject-offer/', RejectOfferView.as_view(), name='reject-offer'),
     path('offers/', OffersView.as_view(), name='offers'),
     path('offereds/', OfferedsView.as_view(), name='offered'),
