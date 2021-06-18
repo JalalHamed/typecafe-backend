@@ -62,9 +62,8 @@ class CreateOfferView(APIView):
             pass
         project = Project.objects.get(id=request.data['project'])
         # earning per page with commission
-        eppwc = request.data['offered_price'] - \
-            request.data['offered_price'] * 0.1
-        total_price = eppwc * project.number_of_pages
+        total_price = (request.data['offered_price'] * project.number_of_pages) + (
+            request.data['offered_price'] * project.number_of_pages * 0.1)
         if request.user.credit < total_price:
             return Response('Not enough credits player, you already know.', status=status.HTTP_403_FORBIDDEN)
         if Project.objects.get(id=request.data['project']).client == request.user:
@@ -75,7 +74,7 @@ class CreateOfferView(APIView):
             return Response({'error': 'You have already made a request for this project.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = CreateOfferSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(project=Project.objects.get(
+        serializer.save(total_price=total_price, project=Project.objects.get(
             id=request.data['project']), typist=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -123,24 +122,25 @@ class TypistDeclareReadyView(APIView):
 
     def post(self, request):
         offer = Offer.objects.get(id=request.data['id'])
-        total_price = offer.offered_price * offer.project.number_of_pages
-        typist_total_price = total_price - total_price * 0.1
-        client_total_price = total_price + total_price * 0.1
         if offer.typist != request.user:
             return Response('How that\'s gonna help?', status=status.HTTP_403_FORBIDDEN)
-        if request.user.credit < client_total_price:
+        if request.user.credit < offer.total_price:
             return Response('Not enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
-        if offer.typist.credit < typist_total_price:
-            return Response('Typist Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
+        if offer.project.client.credit < offer.total_price:
+            return Response('Client Doesn\'t have enough credits.', status=status.HTTP_402_PAYMENT_REQUIRED)
         if offer.client_accept:
-            offer.project.status = 'IP'
-            offer.project.save()
             Offer.objects.filter(project=offer.project).filter(
                 ~Q(id=request.data['id'])).delete()  # ~Q means not equal
             Offer.objects.filter(typist=request.user).filter(
                 ~Q(id=request.data['id'])).delete()
+            offer.project.status = 'IP'
+            offer.project.save()
             offer.status = 'ACC'
             offer.typist_ready = timezone.now()
+            request.user.credit -= offer.total_price
+            request.user.save()
+            offer.project.client.credit -= offer.total_price
+            offer.project.client.save()
             offer.save()
             return Response(status=status.HTTP_200_OK)
         else:
@@ -181,6 +181,7 @@ class OfferedsView(APIView):
                 'id': x.id,
                 'project': x.project.id,
                 'offered_price': x.offered_price,
+                'total_price': x.total_price,
                 'created_at': x.created_at,
                 'status': x.status,
                 'typist_id': x.typist.id,

@@ -14,7 +14,6 @@ class Project(models.Model):
         ('D', 'Done'),
         ('J', 'Judgment'),
     ]
-
     client = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     file = models.FileField(upload_to=upload_path)
@@ -42,6 +41,7 @@ class Offer(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)
     offered_price = models.IntegerField()
+    total_price = models.IntegerField()
     client_accept = models.DateTimeField(blank=True, null=True)
     typist_ready = models.DateTimeField(blank=True, null=True)
     status = models.CharField(
