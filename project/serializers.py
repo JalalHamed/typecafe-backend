@@ -43,11 +43,15 @@ class CreateProjectSerializer(serializers.ModelSerializer):
 class OfferSerializer(serializers.ModelSerializer):
     typist = serializers.SerializerMethodField('get_typist_displayname')
     typist_image = serializers.SerializerMethodField('get_typist_image')
+    typist_is_online = serializers.SerializerMethodField(
+        'get_typist_is_online')
+    typist_last_login = serializers.SerializerMethodField(
+        'get_typist_last_login')
     typist_id = serializers.SerializerMethodField('get_typist_id')
 
     class Meta:
         model = Offer
-        fields = ['id', 'project', 'typist', 'typist_image',
+        fields = ['id', 'project', 'typist', 'typist_image', 'typist_is_online', 'typist_last_login',
                   'typist_id', 'status', 'offered_price', 'total_price', 'client_accept', 'typist_ready', 'created_at']
 
     def get_typist_displayname(self, offer):
@@ -56,6 +60,12 @@ class OfferSerializer(serializers.ModelSerializer):
     def get_typist_image(self, offer):
         if offer.typist.image:
             return '/media/' + str(offer.typist.image)
+
+    def get_typist_is_online(self, offer):
+        return offer.typist.is_online
+
+    def get_typist_last_login(self, offer):
+        return offer.typist.last_login
 
     def get_typist_id(self, offer):
         return offer.typist.id

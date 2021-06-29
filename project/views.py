@@ -76,7 +76,15 @@ class CreateOfferView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(total_price=total_price, project=Project.objects.get(
             id=request.data['project']), typist=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        data = {
+            'project': serializer.data['project'],
+            'offered_price': serializer.data['offered_price'],
+            'total_price': total_price,
+            'id': serializer.data['id'],
+            'status': serializer.data['status'],
+            'typist_id': serializer.data['typist_id'],
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class DeleteOfferView(APIView):
@@ -142,7 +150,7 @@ class TypistDeclareReadyView(APIView):
             offer.project.client.credit -= offer.total_price
             offer.project.client.save()
             offer.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response(offer.typist_ready, status=status.HTTP_200_OK)
         else:
             return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
 
@@ -186,6 +194,7 @@ class OfferedsView(APIView):
                 'status': x.status,
                 'typist_id': x.typist.id,
                 'client_accept': x.client_accept,
+                'typist_ready': x.typist_ready,
             })
         return Response(offereds, status=status.HTTP_200_OK)
 

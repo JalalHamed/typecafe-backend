@@ -138,6 +138,7 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'typist': typist['displayname'],
                 'typist_image': typist_image,
                 'typist_id': typist['id'],
+                'typist_is_online': typist['is_online'],
                 'offered_price': offer['offered_price'],
                 'total_price': offer['total_price'],
                 'created_at': str(offer['created_at']),
@@ -204,6 +205,8 @@ class TcConsumer(AsyncWebsocketConsumer):
             'ws_type': 'in-progress',
             'project': project['id'],
             'typist': event['data']['typist'],
+            'typist_ready': event['data']['typist_ready'],
+            'total_price': event['data']['total_price'],
         }))
 
     @ database_sync_to_async
