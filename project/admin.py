@@ -20,6 +20,12 @@ class DownloadedAdmin(admin.ModelAdmin):
     search_fields = ['user']
 
 
+class DeliverAdmin(admin.ModelAdmin):
+    list_display = ('id', 'project', 'number_of_pages', 'delivered_at')
+    search_fields = ['project']
+
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Downloaded, DownloadedAdmin)
+admin.site.register(Deliver, DeliverAdmin)

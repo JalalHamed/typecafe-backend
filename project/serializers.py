@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.utils import field_mapping
 from .models import *
 
 
@@ -86,3 +87,9 @@ class DownloadedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Downloaded
         fields = ['project']
+
+
+class DeliverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Deliver
+        fields = ['file', 'number_of_pages']

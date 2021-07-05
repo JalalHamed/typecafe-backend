@@ -17,4 +17,5 @@ urlpatterns = [
     path('offers/', OffersView.as_view(), name='offers'),
     path('offereds/', OfferedsView.as_view(), name='offered'),
     path('downloaded/', DownloadedView.as_view(), name='downloaded'),
+    path('deliver/', DeliverTypedFile.as_view(), name='deliver-typed-file'),
 ]

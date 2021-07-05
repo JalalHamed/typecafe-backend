@@ -68,6 +68,7 @@ class Downloaded(models.Model):
 
 
 class Deliver(models.Model):
+    project = models.ForeignKey(Project, on_delete=CASCADE)
     file = models.FileField(upload_to=deliver_upload_path)
     number_of_pages = models.IntegerField()
     delivered_at = models.DateTimeField(auto_now_add=True)

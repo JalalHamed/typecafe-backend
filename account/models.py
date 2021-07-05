@@ -4,7 +4,6 @@ from django.core.validators import RegexValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-
 def profile_upload_path(instance, filename):
     return '/'.join(['profile', filename])
 
@@ -45,13 +44,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
     displayname = models.CharField(
         max_length=14, validators=[displaynameValidator])
     credit = models.IntegerField(default=0)
-    image = models.ImageField(null=True, blank=True, upload_to=profile_upload_path)
+    image = models.ImageField(null=True, blank=True,
+                              upload_to=profile_upload_path)
     typist_successful_projects = models.IntegerField(default=0)
     typist_unsuccessful_projects = models.IntegerField(default=0)
     ontime_delivery = models.IntegerField(default=0)
     client_successful_projects = models.IntegerField(default=0)
     client_unsuccessful_projects = models.IntegerField(default=0)
     ontime_payment = models.IntegerField(default=0)
+    project_todo = models.IntegerField(default=0)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(blank=True, null=True)
     is_online = models.IntegerField(default=0)

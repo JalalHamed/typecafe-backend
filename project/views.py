@@ -54,12 +54,8 @@ class CreateOfferView(APIView):
     def post(self, request):
         if request.data['offered_price'] < 1560:
             return Response('Ambition? No?', status=status.HTTP_403_FORBIDDEN)
-        try:
-            query = Offer.objects.filter(
-                typist=request.user).get(status="ACC")
-            return Response(query.project.id, status=status.HTTP_403_FORBIDDEN)
-        except:
-            pass
+        if request.user.project_todo:
+            return Response(request.user.project_todo, status=status.HTTP_403_FORBIDDEN)
         project = Project.objects.get(id=request.data['project'])
         # earning per page with commission
         total_price = (request.data['offered_price'] * project.number_of_pages) + (
@@ -76,6 +72,8 @@ class CreateOfferView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(total_price=total_price, project=Project.objects.get(
             id=request.data['project']), typist=request.user)
+        Account.objects.filter(id=request.user.id).update(
+            project_todo=request.data['project'])
         data = {
             'project': serializer.data['project'],
             'offered_price': serializer.data['offered_price'],
@@ -216,8 +214,15 @@ class DownloadedView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-# class DeliverTypedFile(APIView):
-#     permission_classes = [IsAuthenticated]
+class DeliverTypedFile(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     def post(self, request):
-        
+    def post(self, request):
+        project = Project.objects.get(id=request.data['project'])
+        typist = Offer.objects.get(project=project).typist
+        if typist != request.user:
+            return Response('You can\'t do this.', status=status.HTTP_401_UNAUTHORIZED)
+        serializer = DeliverSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(project=project)
+        return Response(status=status.HTTP_200_OK)

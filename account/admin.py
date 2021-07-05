@@ -10,7 +10,8 @@ class AccountAdmin(UserAdmin):
     ordering = ['-date_joined']
     search_fields = ['displayname', 'email']
     fieldsets = (
-        ('Details', {'fields': ('displayname', 'email', 'image', 'is_online',)}),
+        ('Details', {'fields': ('displayname', 'email',
+         'image', 'is_online', 'project_todo')}),
         ('Credits', {'fields': ('credit',)}),
     )
     add_fieldsets = (
