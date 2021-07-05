@@ -3,8 +3,12 @@ from django.db.models.deletion import CASCADE
 from account.models import Account
 
 
-def upload_path(instance, filename):
+def project_upload_path(instance, filename):
     return '/'.join(['projects', filename])
+
+
+def deliver_upload_path(instance, filename):
+    return '/'.join(['delivers', filename])
 
 
 class Project(models.Model):
@@ -16,7 +20,7 @@ class Project(models.Model):
     ]
     client = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    file = models.FileField(upload_to=upload_path)
+    file = models.FileField(upload_to=project_upload_path)
     languages_and_additions = models.TextField()
     number_of_pages = models.IntegerField()
     delivery_deadline = models.IntegerField()
@@ -61,3 +65,12 @@ class Downloaded(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class Deliver(models.Model):
+    file = models.FileField(upload_to=deliver_upload_path)
+    number_of_pages = models.IntegerField()
+    delivered_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id)

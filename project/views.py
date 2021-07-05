@@ -214,3 +214,10 @@ class DownloadedView(APIView):
             serializer.is_valid(raise_exception=True)
             serializer.save(user=request.user)
         return Response(status=status.HTTP_201_CREATED)
+
+
+# class DeliverTypedFile(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request):
+        
