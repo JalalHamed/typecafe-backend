@@ -72,8 +72,6 @@ class CreateOfferView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(total_price=total_price, project=Project.objects.get(
             id=request.data['project']), typist=request.user)
-        Account.objects.filter(id=request.user.id).update(
-            project_todo=request.data['project'])
         data = {
             'project': serializer.data['project'],
             'offered_price': serializer.data['offered_price'],
@@ -139,7 +137,7 @@ class TypistDeclareReadyView(APIView):
                 ~Q(id=request.data['id'])).delete()  # ~Q means not equal
             Offer.objects.filter(typist=request.user).filter(
                 ~Q(id=request.data['id'])).delete()
-            offer.project.status = 'IP'
+            offer.project.status = 'I'
             offer.project.save()
             offer.status = 'ACC'
             offer.typist_ready = timezone.now()
@@ -148,6 +146,8 @@ class TypistDeclareReadyView(APIView):
             offer.project.client.credit -= offer.total_price
             offer.project.client.save()
             offer.save()
+            Account.objects.filter(id=request.user.id).update(
+                project_todo=offer.project.id)
             return Response(offer.typist_ready, status=status.HTTP_200_OK)
         else:
             return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
@@ -225,4 +225,6 @@ class DeliverTypedFile(APIView):
         serializer = DeliverSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(project=project)
+        project.status = 'D'
+        project.save()
         return Response(status=status.HTTP_200_OK)

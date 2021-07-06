@@ -14,8 +14,9 @@ def deliver_upload_path(instance, filename):
 class Project(models.Model):
     STATUS_CHOICES = [
         ('O', 'Open'),
-        ('IP', 'In Progress'),
-        ('D', 'Done'),
+        ('I', 'In-Progress'),
+        ('D', 'Delivered'),
+        ('F', 'Failed'),
         ('J', 'Judgment'),
     ]
     client = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -27,7 +28,7 @@ class Project(models.Model):
     description = models.TextField(null=True, blank=True)
     type = models.TextField()
     status = models.CharField(
-        max_length=2, choices=STATUS_CHOICES, default='O')
+        max_length=1, choices=STATUS_CHOICES, default='O')
 
     class Meta:
         ordering = ['-created_at']

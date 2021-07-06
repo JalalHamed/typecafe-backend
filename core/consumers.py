@@ -72,9 +72,9 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'type': 'client_accept',
                 'data': data,
             })
-        if data['status'] == 'in-progress':
+        if data['status'] == 'project-in-progress':
             await self.channel_layer.group_send('tc', {
-                'type': 'in_progress',
+                'type': 'project_in_progress',
                 'data': data,
             })
 
@@ -199,10 +199,10 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'total_price': offer['total_price'],
             }))
 
-    async def in_progress(self, event):
+    async def project_in_progress(self, event):
         project = await self.get_project(event['data']['project'])
         await self.send(text_data=json.dumps({
-            'ws_type': 'in-progress',
+            'ws_type': 'project-in-progress',
             'project': project['id'],
             'typist': event['data']['typist'],
             'typist_ready': event['data']['typist_ready'],

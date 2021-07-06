@@ -83,6 +83,9 @@ class ConfirmationCode(models.Model):
         return str(self.code)
 
 
+# class Financials(models.Model):
+
+
 class SupportTicket(models.Model):
     client = models.ForeignKey(Account, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
