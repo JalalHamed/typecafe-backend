@@ -77,6 +77,11 @@ class TcConsumer(AsyncWebsocketConsumer):
                 'type': 'project_in_progress',
                 'data': data,
             })
+        if data['status'] == 'project-delivered':
+            await self.channel_layer.group_send('tc', {
+                'type': 'project_delivered',
+                'data': data,
+            })
 
     async def user_online(self, event):
         await self.send(text_data=json.dumps({
@@ -207,6 +212,14 @@ class TcConsumer(AsyncWebsocketConsumer):
             'typist': event['data']['typist'],
             'typist_ready': event['data']['typist_ready'],
             'total_price': event['data']['total_price'],
+            'offer': event['data']['offer'],
+        }))
+
+    async def project_delivered(self, event):
+        project = await self.get_project(event['data']['project'])
+        await self.send(text_data=json.dumps({
+            'ws_type': 'project-delivered',
+            'project': project['id'],
         }))
 
     @ database_sync_to_async

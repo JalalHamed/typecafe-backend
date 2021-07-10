@@ -42,6 +42,7 @@ class Offer(models.Model):
         ('A', 'Await'),
         ('ACC', 'Accepted'),
         ('REJ', 'Rejected'),
+        ('END', 'End'),
     ]
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)

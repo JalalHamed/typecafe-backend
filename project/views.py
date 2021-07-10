@@ -44,6 +44,8 @@ class DeleteProjectView(APIView):
         project = Project.objects.get(id=request.data['id'])
         if project.client != request.user:
             return Response('lol. nice try', status=status.HTTP_403_FORBIDDEN)
+        if project.status != 'O':
+            return Response('Yeah, No.', status=status.HTTP_403_FORBIDDEN)
         project.delete()
         return Response(status=status.HTTP_200_OK)
 
@@ -101,7 +103,7 @@ class ClientAcceptView(APIView):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.project.client != request.user:
             return Response('This is not your offer to accept.', status=status.HTTP_403_FORBIDDEN)
-        query = Offer.objects.filter(typist=offer.typist)
+        query = Offer.objects.filter(typist=offer.typist).filter(status='ACC')
         for x in query:
             if x.typist_ready:
                 return Response('Typist is already busy with another project.', status=status.HTTP_400_BAD_REQUEST)
@@ -141,13 +143,12 @@ class TypistDeclareReadyView(APIView):
             offer.project.save()
             offer.status = 'ACC'
             offer.typist_ready = timezone.now()
+            offer.save()
             request.user.credit -= offer.total_price
+            request.user.project_todo = offer.project.id
             request.user.save()
             offer.project.client.credit -= offer.total_price
             offer.project.client.save()
-            offer.save()
-            Account.objects.filter(id=request.user.id).update(
-                project_todo=offer.project.id)
             return Response(offer.typist_ready, status=status.HTTP_200_OK)
         else:
             return Response('Too late unfortunately.', status=status.HTTP_400_BAD_REQUEST)
@@ -219,12 +220,17 @@ class DeliverTypedFile(APIView):
 
     def post(self, request):
         project = Project.objects.get(id=request.data['project'])
-        typist = Offer.objects.get(project=project).typist
-        if typist != request.user:
+        offer = Offer.objects.get(project=project)
+        if offer.typist != request.user:
             return Response('You can\'t do this.', status=status.HTTP_401_UNAUTHORIZED)
         serializer = DeliverSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(project=project)
         project.status = 'D'
         project.save()
+        offer.typist.project_todo = 0
+        offer.typist.save()
+        offer.status = 'END'
+        offer.save()
+
         return Response(status=status.HTTP_200_OK)

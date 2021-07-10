@@ -21,7 +21,7 @@ class DownloadedAdmin(admin.ModelAdmin):
 
 
 class DeliverAdmin(admin.ModelAdmin):
-    list_display = ('id', 'project', 'number_of_pages', 'delivered_at')
+    list_display = ('project', 'number_of_pages', 'delivered_at', 'id')
     search_fields = ['project']
 
 
