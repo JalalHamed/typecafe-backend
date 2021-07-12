@@ -15,7 +15,7 @@ urlpatterns = [
          name='typist-declare-ready'),
     path('reject-offer/', RejectOfferView.as_view(), name='reject-offer'),
     path('offers/', OffersView.as_view(), name='offers'),
-    path('offereds/', OfferedsView.as_view(), name='offered'),
+    path('myoffers/', OfferedsView.as_view(), name='offered'),
     path('downloaded/', DownloadedView.as_view(), name='downloaded'),
     path('deliver/', DeliverTypedFile.as_view(), name='deliver-typed-file'),
 ]

@@ -103,11 +103,9 @@ class ClientAcceptView(APIView):
         offer = Offer.objects.get(id=request.data['id'])
         if offer.project.client != request.user:
             return Response('This is not your offer to accept.', status=status.HTTP_403_FORBIDDEN)
-        query = Offer.objects.filter(typist=offer.typist).filter(status='ACC')
+        query = Offer.objects.filter(typist=offer.typist)
         for x in query:
-            if x.typist_ready:
-                return Response('Typist is already busy with another project.', status=status.HTTP_400_BAD_REQUEST)
-            if x.client_accept:
+            if x.status != 'END' and x.client_accept:
                 return Response('Typist already has another project to declare ready for.', status=status.HTTP_400_BAD_REQUEST)
         offer.client_accept = timezone.now()
         offer.save()
@@ -182,9 +180,9 @@ class OfferedsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        offereds = []
+        myoffers = []
         for x in Offer.objects.filter(typist=request.user):
-            offereds.append({
+            myoffers.append({
                 'id': x.id,
                 'project': x.project.id,
                 'offered_price': x.offered_price,
@@ -195,7 +193,7 @@ class OfferedsView(APIView):
                 'client_accept': x.client_accept,
                 'typist_ready': x.typist_ready,
             })
-        return Response(offereds, status=status.HTTP_200_OK)
+        return Response(myoffers, status=status.HTTP_200_OK)
 
 
 class DownloadedView(APIView):
