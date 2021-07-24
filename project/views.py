@@ -18,7 +18,7 @@ class ProjectView(ListAPIView):
     pagination_class = PageNumberPagination
 
 
-class MyProjectsView(APIView):
+class MineView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -176,7 +176,7 @@ class OffersView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class OfferedsView(APIView):
+class MyOffersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

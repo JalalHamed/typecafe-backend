@@ -5,7 +5,7 @@ app_name = 'project'
 
 urlpatterns = [
     path('projects/', ProjectView.as_view(), name='projects'),
-    path('my-projects/', MyProjectsView.as_view(), name='my-projects'),
+    path('mine/', MineView.as_view(), name='mine'),
     path('create-project/', CreateProjectView.as_view(), name='createproject'),
     path('delete-project/', DeleteProjectView.as_view(), name='deleteproject'),
     path('create-offer/', CreateOfferView.as_view(), name='createoffer'),
@@ -15,7 +15,7 @@ urlpatterns = [
          name='typist-declare-ready'),
     path('reject-offer/', RejectOfferView.as_view(), name='reject-offer'),
     path('offers/', OffersView.as_view(), name='offers'),
-    path('myoffers/', OfferedsView.as_view(), name='offered'),
+    path('my-offers/', MyOffersView.as_view(), name='my-offers'),
     path('downloaded/', DownloadedView.as_view(), name='downloaded'),
     path('deliver/', DeliverTypedFile.as_view(), name='deliver-typed-file'),
 ]
