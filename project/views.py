@@ -11,9 +11,30 @@ from .models import *
 from .serializers import *
 
 
-class ProjectView(ListAPIView):
+class AllProjectView(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Project.objects.all()
+    serializer_class = ProjectsSerializer
+    pagination_class = PageNumberPagination
+
+
+class OpenProjectsView(ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Project.objects.filter(status="O")
+    serializer_class = ProjectsSerializer
+    pagination_class = PageNumberPagination
+
+
+class InProgressProjectsView(ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Project.objects.filter(status="I")
+    serializer_class = ProjectsSerializer
+    pagination_class = PageNumberPagination
+
+
+class DeliveredProjectsView(ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Project.objects.filter(status="D")
     serializer_class = ProjectsSerializer
     pagination_class = PageNumberPagination
 
