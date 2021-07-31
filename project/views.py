@@ -12,7 +12,7 @@ from .serializers import *
 
 
 class AllProjectView(ListAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     queryset = Project.objects.all()
     serializer_class = ProjectsSerializer
     pagination_class = PageNumberPagination
@@ -26,26 +26,30 @@ class OpenProjectsView(ListAPIView):
 
 
 class InProgressProjectsView(ListAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     queryset = Project.objects.filter(status="I")
     serializer_class = ProjectsSerializer
     pagination_class = PageNumberPagination
 
 
 class DeliveredProjectsView(ListAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     queryset = Project.objects.filter(status="D")
     serializer_class = ProjectsSerializer
     pagination_class = PageNumberPagination
 
 
-class MineView(APIView):
+class MyProjectsAndOffersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         serializer = ProjectsSerializer(
             Project.objects.filter(client=request.user), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MyProjects(APIView):
+    permission_classes = [IsAuthenticated]
 
 
 class CreateProjectView(APIView):
@@ -75,14 +79,14 @@ class CreateOfferView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.data['offered_price'] < 1560:
+        if request.data['offer_price'] < 1560:
             return Response('Ambition? No?', status=status.HTTP_403_FORBIDDEN)
         if request.user.project_todo:
             return Response(request.user.project_todo, status=status.HTTP_403_FORBIDDEN)
         project = Project.objects.get(id=request.data['project'])
         # earning per page with commission
-        total_price = (request.data['offered_price'] * project.number_of_pages) + (
-            request.data['offered_price'] * project.number_of_pages * 0.1)
+        total_price = (request.data['offer_price'] * project.number_of_pages) + (
+            request.data['offer_price'] * project.number_of_pages * 0.1)
         if request.user.credit < total_price:
             return Response('Not enough credits player, you already know.', status=status.HTTP_403_FORBIDDEN)
         if Project.objects.get(id=request.data['project']).client == request.user:
@@ -97,7 +101,7 @@ class CreateOfferView(APIView):
             id=request.data['project']), typist=request.user)
         data = {
             'project': serializer.data['project'],
-            'offered_price': serializer.data['offered_price'],
+            'offer_price': serializer.data['offer_price'],
             'total_price': total_price,
             'id': serializer.data['id'],
             'status': serializer.data['status'],
@@ -202,11 +206,11 @@ class MyOffersView(APIView):
 
     def get(self, request):
         myoffers = []
-        for x in Offer.objects.filter(typist=request.user):
+        for x in Offer.objects.filter(typist=request.user).filter(~Q(status="END")):
             myoffers.append({
                 'id': x.id,
                 'project': x.project.id,
-                'offered_price': x.offered_price,
+                'offer_price': x.offer_price,
                 'total_price': x.total_price,
                 'created_at': x.created_at,
                 'status': x.status,

@@ -46,7 +46,7 @@ class Offer(models.Model):
     ]
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     typist = models.ForeignKey(Account, on_delete=models.CASCADE)
-    offered_price = models.IntegerField()
+    offer_price = models.IntegerField()
     total_price = models.IntegerField()
     client_accept = models.DateTimeField(blank=True, null=True)
     typist_ready = models.DateTimeField(blank=True, null=True)

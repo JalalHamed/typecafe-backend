@@ -9,7 +9,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ('typist', 'project', 'offered_price',
+    list_display = ('typist', 'project', 'offer_price',
                     'total_price', 'created_at', 'id', 'status')
     ordering = ['-created_at']
     search_fields = ['typist']

@@ -10,7 +10,7 @@ urlpatterns = [
          name='in-progress-projects'),
     path('delivered-projects/', DeliveredProjectsView.as_view(),
          name='delivered-projects'),
-    path('mine/', MineView.as_view(), name='mine'),
+    path('my-projects-and-offers/', MyProjectsAndOffersView.as_view(), name='mine'),
     path('create-project/', CreateProjectView.as_view(), name='createproject'),
     path('delete-project/', DeleteProjectView.as_view(), name='deleteproject'),
     path('create-offer/', CreateOfferView.as_view(), name='createoffer'),
