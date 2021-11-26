@@ -11,6 +11,17 @@ from .models import *
 from .serializers import *
 
 
+class GetProjectsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        projects = []
+        for projectID in request.data:
+            projects.append(Project.objects.get(id=projectID))
+        print('----------', projects)
+        return Response('ok')
+
+
 class AllProjectView(ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Project.objects.all()
@@ -39,13 +50,13 @@ class DeliveredProjectsView(ListAPIView):
     pagination_class = PageNumberPagination
 
 
-class MyProjectsAndOffersView(APIView):
+class MyProjectsView(ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ProjectsSerializer
+    pagination_class = PageNumberPagination
 
-    def get(self, request):
-        serializer = ProjectsSerializer(
-            Project.objects.filter(client=request.user), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        return Project.objects.filter(client=self.request.user)
 
 
 class MyProjects(APIView):
